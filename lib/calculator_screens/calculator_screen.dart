@@ -1,0 +1,206 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../ViewModels/calculate_provider.dart';
+import '../screens/user_screens.dart';
+import 'advanced_calculate_screen.dart';
+class CalculateScreen extends StatelessWidget {
+  const CalculateScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var calculatorProvider = Provider.of<CalculateProvider>(context);
+    return Scaffold(
+      backgroundColor: const Color(0xFF1d2630),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height / 3.35,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 0, right: 5),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AdvancedCalculateScreen(),
+                                  ));
+                            },
+                            icon: const FaIcon(
+                              FontAwesomeIcons.squareRootVariable,
+                              // Square root symbol
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 0, right: 10),
+                          child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserScreens(name: "", currentDate: DateFormat('hh:mm a').format(DateTime.now()), result: calculatorProvider.result,),
+                                    ));
+                              },
+                              icon: const Icon(
+                                Icons.history,
+                                color: Colors.white,
+                                size: 20,
+                              )),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      alignment: Alignment.bottomRight,
+                      child: SingleChildScrollView(
+                        controller: calculatorProvider.scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2, right: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                calculatorProvider.userInput,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(top: 10, right: 2),
+                      alignment: Alignment.bottomRight,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 10,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    calculatorProvider.result,
+                                    style: TextStyle(
+                                        fontSize: calculatorProvider.result.length > 12 ? 35 : 48, color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(
+              color: Colors.white70,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: IconButton(
+                          onPressed: () {
+                            calculatorProvider.handleButton(
+                                "backspace", context);
+                          },
+                          icon: const Icon(
+                            Icons.backspace,
+                            color: Colors.red,
+                            size: 18,
+                          )),
+                    )
+                  ],
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(5.0),
+                child: GridView.builder(
+                  itemCount: calculatorProvider.buttonList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (BuildContext context, int index) {
+                    return customButton(
+                        calculatorProvider.buttonList[index], context);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget customButton(String text, BuildContext context) {
+    var calculatorProvider = Provider.of<CalculateProvider>(context);
+    return InkWell(
+      splashColor: const Color(0xFF1d2630),
+      onTap: () {
+        calculatorProvider.handleButton(text, context);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: calculatorProvider.getBgColor(text, context),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white38.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(-3, -3),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: calculatorProvider.getColor(text, context)),
+          ),
+        ),
+      ),
+    );
+  }
+}
