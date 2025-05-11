@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:mycalculator/app_rough.dart';
+import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
+import '../Utils/app_them.dart';
 import '../ViewModels/advanced_calculater_provider.dart';
 import 'calculator_screen.dart';
 
@@ -12,6 +17,30 @@ class AdvancedCalculateScreen extends StatefulWidget {
 }
 
 class _AdvancedCalculateScreenState extends State<AdvancedCalculateScreen> {
+
+  final LocalAuthentication auth = LocalAuthentication();
+
+  void checkAuth()async{
+    bool isAvailable;
+    isAvailable = await auth.canCheckBiometrics;
+    Fluttertoast.showToast(msg: "is Available");
+
+    if(isAvailable){
+      bool result = await auth.authenticate(
+        localizedReason: "Scan Your Finger Print to Proceed",
+        options:const AuthenticationOptions(biometricOnly: true),
+      );
+      if(result){
+      AppRough.navigatePage(context, UserScreens());
+      }else{
+        Fluttertoast.showToast(msg: "Permission Denied");
+      }
+
+    }else{
+      Fluttertoast.showToast(msg: "No Biometric sensor detected");
+    }
+
+  }
   @override
   void initState() {
     super.initState();
@@ -28,7 +57,7 @@ class _AdvancedCalculateScreenState extends State<AdvancedCalculateScreen> {
   Widget build(BuildContext context) {
     var calculatorProvider2 = Provider.of<AdvancedCalculatorProvider>(context);
     return Scaffold(
-      backgroundColor: const Color(0xFF1d2630),
+      backgroundColor: AppThem.appBgColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -71,7 +100,9 @@ class _AdvancedCalculateScreenState extends State<AdvancedCalculateScreen> {
                           width: 40,
                           child: Center(
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                checkAuth();
+                              },
                               icon: const Icon(
                                 Icons.history,
                                 color: Colors.white,

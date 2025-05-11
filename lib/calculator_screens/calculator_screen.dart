@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../Utils/app_them.dart';
 import '../ViewModels/calculate_provider.dart';
-import '../screens/user_screens.dart';
 import 'advanced_calculate_screen.dart';
 class CalculateScreen extends StatelessWidget {
   const CalculateScreen({super.key});
@@ -12,7 +11,7 @@ class CalculateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var calculatorProvider = Provider.of<CalculateProvider>(context);
     return Scaffold(
-      backgroundColor: const Color(0xFF1d2630),
+      backgroundColor: AppThem.appBgColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -49,11 +48,7 @@ class CalculateScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 0, right: 10),
                           child: IconButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UserScreens(name: "", currentDate: DateFormat('hh:mm a').format(DateTime.now()), result: calculatorProvider.result,),
-                                    ));
+                               calculatorProvider.checkLocalAuth(context);
                               },
                               icon: const Icon(
                                 Icons.history,
@@ -91,7 +86,7 @@ class CalculateScreen extends StatelessWidget {
                       height: 10,
                     ),
                     Container(
-                      padding: const EdgeInsets.only(top: 10, right: 2),
+                      padding: const EdgeInsets.only(top: 8, right: 2),
                       alignment: Alignment.bottomRight,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,

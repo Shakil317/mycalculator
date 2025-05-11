@@ -1,9 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:mycalculator/app_rough.dart';
+import 'package:mycalculator/screens/user_screens.dart';
+import 'package:uuid/uuid.dart';
 import '../models/users_model.dart';
+import '../screens/user_contact.dart';
 import 'contact_provider.dart';
 import 'database_helper.dart';
 
@@ -14,13 +17,14 @@ class UserProvider with ChangeNotifier {
   List<UsersModel> users = [];
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  final LocalAuthentication localAuth = LocalAuthentication();
 
   UserProvider() {
     searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
-    searchUsers(searchController.text);
+    searchUsers(searchController.text.toString());
   }
 
 
@@ -29,9 +33,7 @@ class UserProvider with ChangeNotifier {
       filteredUsers = List.from(users);
     } else {
       filteredUsers = users.where((user) {
-        return user.name!.toLowerCase().contains(query.toLowerCase()) ||
-            user.number!.contains(query);
-      }).toList();
+        return user.name!.toLowerCase().contains(query.toLowerCase()) || user.number!.contains(query);}).toList();
     }
     notifyListeners();
   }
@@ -42,10 +44,13 @@ class UserProvider with ChangeNotifier {
     });
     notifyListeners();
   }
-
-  void insertNewUser(BuildContext context) async {
+  void insertNewUser(BuildContext context,) async {
+    int creditID = DateTime.now().microsecond ~/ 10;
+    String userId = const Uuid().v4();
+    String imagePath = image != null ? image!.path : "assets/images/shakilansari.jpg";
     var addUser = {
-      "image": image!.path,
+      "userId_321": userId.replaceAll('-', ' ').substring(0,16),
+      "image": imagePath,
       "name": nameController.text.toString(),
       "number": numberController.text.toString(),
     };
@@ -53,6 +58,7 @@ class UserProvider with ChangeNotifier {
     Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.toString()}');
     showData();
     notifyListeners();
+    clearController();
   }
 
   void deleteUser(BuildContext context, var index) async {
@@ -69,10 +75,20 @@ class UserProvider with ChangeNotifier {
     filteredUsers = List.from(users);
     notifyListeners();
   }
+  void updateUsers(BuildContext context, var userId) async{
+    var updateData = {
+      "userId_321": userId,
+      "image": image!.path,
+      "name": nameController.text.toString(),
+      "number": numberController.text.toString(),
+    };
+    await DatabaseHelper().updateUser(updateData, users[userId].id!);
+     AppRough.navigatePage(context, const UserScreens());
+    notifyListeners();
+  }
 
   Future<void> pickNewImage() async {
-    final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = pickedFile;
     } else {
@@ -81,42 +97,71 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addNewUserWithFilter(BuildContext context) async {
-    var provider = Provider.of<ContactProvider>(context, listen: false);
-    var name = nameController.text.toString();
-    var number = numberController.text.toString();
-    if (name.isNotEmpty && number.isNotEmpty) {
-      String enteredName = nameController.text.trim();
-      String enteredPhoneNumber = numberController.text.trim();
-      bool isPhoneNumberExist = provider.contacts.any((contact) {
-        return contact.phones!.any((phone) => phone.value == enteredPhoneNumber);
-      });
-      bool isNameExist =provider.contacts.any((contact) {
-        return contact.givenName == enteredName;
-      });
+  Future<void> addNewUserWithFilter(BuildContext context, ContactProvider contactProvider) async {
+    String enteredName =
+        nameController.text.trim();
+    String enteredPhoneNumber =
+        numberController.text.trim();
+    if (enteredName.isNotEmpty &&
+        enteredPhoneNumber.isNotEmpty) {
+      bool isPhoneNumberExist = contactProvider.contacts.any((contact) => contact.phones!.any(
+              (phone) =>
+                  phone.value == enteredPhoneNumber));
+      bool isNameExist = contactProvider.contacts.any((contact) =>
+              contact.displayName == enteredName);
       if (isPhoneNumberExist || isNameExist) {
-        Fluttertoast.showToast(msg: "This phone number or name already exists in this contact list.");
+        Fluttertoast.showToast(
+            msg:
+                "This phone number or name already exists. please click on contactButton");
+        AppRough.navigatePage(context, UserContact(searchName: enteredName,));
       } else {
-        var addUser = UsersModel(
-          image: image!.path,
-          name: nameController.text.toString(),
-          number: numberController.text.toString(),
-        );
-        await DatabaseHelper().insertUser(addUser.toMap());
-        Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.toString()}');
-        notifyListeners();
-        nameController.clear();
-        numberController.clear();
+        insertNewUser (context);
+        Navigator.pop(context);
+        clearController();
+
       }
     } else {
-      Fluttertoast.showToast(msg: "Please fill in all fields.");
+      Fluttertoast.showToast(
+          msg: "Please fill all fields.");
     }
-    notifyListeners();
   }
   @override
   void dispose() {
     searchController.removeListener(_onSearchChanged);
     super.dispose();
+  }
+
+
+
+  void checkLocalAuth(BuildContext context, var index)async{
+    bool isAvailable;
+    isAvailable = await localAuth.canCheckBiometrics;
+    Fluttertoast.showToast(msg: "is Available");
+    if(isAvailable){
+      bool results = await localAuth.authenticate(
+          localizedReason: "Scan Your Finger Print to Proceed",
+          options: const AuthenticationOptions(
+              useErrorDialogs: true
+          ),
+        //options:  AuthenticationOptions(biometricOnly: true),
+      );
+      if(results){
+        DatabaseHelper()
+            .deleteUser(filteredUsers[index].id!);
+        Navigator.pop(context);
+        showData();
+      }else{
+        Fluttertoast.showToast(msg: "Permission Denied");
+      }
+    }else{
+      Fluttertoast.showToast(msg: "No Biometric sensor detected");
+    }
+
+  }
+  void clearController(){
+    nameController.clear();
+    numberController.clear();
+    image = null;
   }
 
 }

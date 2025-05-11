@@ -1,11 +1,9 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:uuid/uuid.dart';
 import 'database_helper.dart';
-
 class ContactProvider with ChangeNotifier {
   late AnimationController searchAnimationController;
   late Animation<Offset> searchAnimation;
@@ -55,24 +53,21 @@ class ContactProvider with ChangeNotifier {
         !phoneNumber.contains('#') &&
         !phoneNumber.contains('+');
   }
-  void addToListDataBase() {
-    DatabaseHelper().getUser().then((value) {
-      newUsers.addAll(value);
-    });
-    notifyListeners();
-  }
+  // void addToListDataBase() {
+  //   DatabaseHelper().getUser().then((value) {
+  //     newUsers.addAll(value);
+  //   });
+  //   notifyListeners();
+  // }
 
-  void addToUserList(String contactName, String currentDateTime) async {
+  void addToUserList(String contactName, String userContactNumber, String userId) async {
     var addUser = {
       "name": contactName,
-      "number": currentDateTime,
+      "number": userContactNumber,
+      "userId_321": userId.replaceAll('-', ' ').substring(0, 16),
     };
     await DatabaseHelper().insertUser(addUser);
-    newUsers.add(addUser);
-    Fluttertoast.showToast(msg: 'Add New User Success $contactName',
-        textColor: Colors.redAccent,
-        fontSize: 16,
-        backgroundColor: Colors.white70);
+    //newUsers.add(addUser);
     showData();
     notifyListeners();
   }
@@ -80,13 +75,13 @@ class ContactProvider with ChangeNotifier {
   void addContactByIndex(int index) async {
     if (index >= 0 && index < contacts.length) {
       var contact = contacts[index];
-      String givenName = contact.givenName ?? 'Unknown Name';
+      String givenName = contact.displayName ?? 'Unknown Name';
       var phoneNumbers = contact.phones ?? [];
+      String userId = const Uuid().v4();
       for (var phone in phoneNumbers) {
         String phoneNumber = phone.value ?? '';
         if (_isValidPhoneNumber(phoneNumber)) {
-          addToUserList(givenName,
-              DateFormat('dd:MM:yyyy hh:mm a').format(DateTime.now()));
+          addToUserList(givenName,phoneNumber,userId);
         }
       }
       Fluttertoast.showToast(msg: 'Contact Added: ${contacts[index].displayName}');
@@ -95,16 +90,14 @@ class ContactProvider with ChangeNotifier {
   void showData() async {
     newUsers.clear();
     List<Map<String, dynamic>> userList = await DatabaseHelper().getUser();
-    newUsers.addAll(userList);
+    //newUsers.addAll(userList);
     notifyListeners();
   }
-
-
   void searchContactsByName() {
     String searchQuery = searchController.text.toLowerCase();
     if (searchQuery.isNotEmpty) {
       contacts = contacts.where((contact) {
-        String contactName = contact.givenName?.toLowerCase() ?? '';
+        String contactName = contact.displayName?.toLowerCase() ?? '';
         return contactName.contains(searchQuery);
       }).toList();
     } else {
@@ -112,5 +105,4 @@ class ContactProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
 }

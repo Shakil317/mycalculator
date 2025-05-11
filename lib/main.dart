@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mycalculator/ViewModels/contact_provider.dart';
-import 'package:mycalculator/ViewModels/custemer_credit_debit_provider.dart';
+import 'package:mycalculator/ViewModels/transition_history_provider.dart';
+import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
 import 'ViewModels/advanced_calculater_provider.dart';
 import 'ViewModels/calculate_provider.dart';
+import 'ViewModels/user_profile_provider.dart';
 import 'ViewModels/user_provider.dart';
-import 'calculator_screens/calculator_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox("UserBox");
-
+  await Hive.openBox("my_profile");
   runApp(const MyApp());
 }
 
@@ -24,16 +24,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CalculateProvider()),
-        ChangeNotifierProvider(
-          create: (context) => AdvancedCalculatorProvider(),),
-        ChangeNotifierProvider(
-          create: (context) => ContactProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-        ),
-        ChangeNotifierProvider(
-          create:(context) => CustemerCreditDebitProvider(), ),
+        ChangeNotifierProvider(create: (context) => AdvancedCalculatorProvider(),),
+        ChangeNotifierProvider(create: (context) => ContactProvider(),),
+        ChangeNotifierProvider(create: (context) => UserProvider(),),
+        ChangeNotifierProvider(create:(context) => TransitionHistoryProvider(), ),
+        ChangeNotifierProvider(create: (context) => UserProfileProvider(),)
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -41,7 +36,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home:const CalculateScreen(),
+        home: const UserScreens(),
         debugShowCheckedModeBanner: false,
       ),
     );
@@ -95,7 +90,7 @@ class _GeneratedBillDesignState extends State<GeneratedBillDesign> {
                    height: MediaQuery.of(context).size.height*1,
                    width: MediaQuery.of(context).size.width*1,
                    color: Colors.orange,
-                   child: Column(
+                   child: const Column(
                      crossAxisAlignment: CrossAxisAlignment.center,
                      mainAxisAlignment: MainAxisAlignment.center,
                      children: [
@@ -109,7 +104,7 @@ class _GeneratedBillDesignState extends State<GeneratedBillDesign> {
                          ],
                        ),
                        Padding(
-                         padding: const EdgeInsets.all(8.0),
+                         padding: EdgeInsets.all(8.0),
                          child: Text("Rent Amount"),
                        ),
                        SizedBox(height: 5,),

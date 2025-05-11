@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:math_expressions/math_expressions.dart';
-
+import 'package:mycalculator/app_rough.dart';
+import '../screens/user_screens.dart';
 class CalculateProvider with ChangeNotifier {
   late String userInput = "";
   String result = "0";
@@ -28,6 +32,29 @@ class CalculateProvider with ChangeNotifier {
     '.',
     '='
   ];
+  final LocalAuthentication localAuth = LocalAuthentication();
+  void checkLocalAuth(BuildContext context)async{
+    bool isAvailable;
+    isAvailable = await localAuth.canCheckBiometrics;
+    Fluttertoast.showToast(msg: "is Available");
+    if(isAvailable){
+      bool results = await localAuth.authenticate(
+        localizedReason: "Scan Your Finger Print to Proceed",
+        options: const AuthenticationOptions(
+          useErrorDialogs: true
+        )
+        //options:const AuthenticationOptions(biometricOnly: true),
+      );
+      if(results){
+        AppRough.navigatePage(context, UserScreens(currentDate: DateFormat('hh:mm a').format(DateTime.now()), result:result));
+      }else{
+        Fluttertoast.showToast(msg: "Permission Denied");
+      }
+    }else{
+      Fluttertoast.showToast(msg: "No Biometric sensor detected");
+    }
+
+  }
 
   Color getColor(String text, BuildContext context) {
     if (text == "/" ||

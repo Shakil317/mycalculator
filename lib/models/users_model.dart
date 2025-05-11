@@ -1,4 +1,5 @@
 class UsersModel {
+  final int? userId;
   final int? id;
   final String? name;
   final String? number;
@@ -6,6 +7,7 @@ class UsersModel {
   final String? dateTime;
 
   UsersModel({
+    this.userId,
     this.id,
     this.name,
     this.number,
@@ -15,6 +17,7 @@ class UsersModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'userID':userId,
       'id': id,
       'name': name,
       'number': number,
@@ -24,6 +27,7 @@ class UsersModel {
   }
   factory UsersModel.fromMap(Map<String, dynamic> map) {
     return UsersModel(
+      userId: map['userID'],
       id: map['id'],
       name: map['name'],
       number: map['number'],
