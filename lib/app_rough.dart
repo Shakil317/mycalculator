@@ -308,7 +308,7 @@ class AppRough{
                          FloatingActionButton.extended(
                            backgroundColor: Colors.orange,
                            onPressed: () {
-                             AppRough.navigatePage(context, UserContact(searchName: '',));
+                             AppRough.navigatePage(context, UserContact());
                            },
                            label: const Row(
                              children: [
@@ -340,8 +340,7 @@ class AppRough{
                                backgroundColor:
                                WidgetStatePropertyAll(Colors.orange)),
                            onPressed: () {
-                             userProvider.addNewUserWithFilter(
-                                 context, contactProvider);
+                             userProvider.addNewUserWithFilter(context, contactProvider);
                            },
                            child: const Text("Save",
                                style: TextStyle(

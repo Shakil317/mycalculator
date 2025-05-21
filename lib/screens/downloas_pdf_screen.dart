@@ -1,22 +1,31 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../ViewModels/transition_history_provider.dart';
 import '../ViewModels/user_profile_provider.dart';
 
 class DownloadsPdfScreenState extends StatefulWidget {
-  const DownloadsPdfScreenState({super.key});
+  final int? id;
+  final String? usersData;
+  const DownloadsPdfScreenState({super.key,this.id,this.usersData});
 
   @override
   State<DownloadsPdfScreenState> createState() => _DownloadsPdfScreenState();
 }
 
 class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
+  late  TransitionHistoryProvider creditProvider;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProfileProvider>(context, listen: false).showProfileData();
+      creditProvider = Provider.of<TransitionHistoryProvider>(context,listen: false);
+      creditProvider.usersId = widget.id!;
+      creditProvider.transitionList.clear();
+      creditProvider.showAmountTransition();
     });
   }
 
@@ -29,14 +38,11 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
             if (provider.userProfile.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-
             final profile = provider.userProfile[0];
-
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Top Profile Info Container
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width * 0.1 + 30,
@@ -55,11 +61,9 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                           InstaImageViewer(
                             child: CircleAvatar(
                               radius: 25,
-                              backgroundColor: Colors.orange,
-                              backgroundImage: profile.profileImage != null
-                                  ? FileImage(File(profile.profileImage!))
-                                  : const AssetImage("assets/images/shakilansari.jpg")
-                              as ImageProvider,
+                              backgroundImage: profile.uploadStamp != null
+                                  ? FileImage(File(profile.uploadStamp!))
+                                  : const AssetImage("assets/images/shakilansari.jpg"),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -75,11 +79,11 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                                 children: [
                                   const Icon(Icons.location_on,
                                       color: Colors.pink, size: 12),
-                                  const Text("HaijalPur Maker"),
+                                  Text(profile.bankInfo ?? "ABC Area"),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.phone,
                                       color: Colors.pink, size: 12),
-                                  Text(profile.phone ?? "6206731127"),
+                                  Text(profile.phone ?? "6206731567"),
                                 ],
                               ),
                             ],
@@ -108,7 +112,7 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                         children: [
                           TableRow(
                             decoration: BoxDecoration(color: Colors.pink.shade200),
-                            children: const [
+                            children:  const [
                               Center(child: Text("No", style: TextStyle(color: Colors.white, fontSize: 12))),
                               Center(child: Text("Date", style: TextStyle(color: Colors.white, fontSize: 12))),
                               Center(child: Text("RemarkItem", style: TextStyle(color: Colors.white, fontSize: 12))),
@@ -117,15 +121,16 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                               Center(child: Text("AllHistory", style: TextStyle(color: Colors.white, fontSize: 12))),
                             ],
                           ),
-                          ...List.generate(10, (index) {
-                            return const TableRow(
+                          ...List.generate(creditProvider.transitionList.length, (index) {
+                            var data = creditProvider.transitionList[index];
+                            return  TableRow(
                               children: [
-                                Center(child: Text("1", style: TextStyle(fontSize: 10))),
-                                Center(child: Text("Date", style: TextStyle(fontSize: 10))),
-                                Center(child: Text("Remark Item", style: TextStyle(fontSize: 10))),
-                                Center(child: Text("1562", style: TextStyle(color: Colors.redAccent, fontSize: 12))),
-                                Center(child: Text("500", style: TextStyle(color: Colors.green, fontSize: 12))),
-                                Center(child: Text("250", style: TextStyle(fontSize: 12))),
+                                Center(child: Text(index.toString(), style: TextStyle(fontSize: index <=15 ? 10 : 8))),
+                                Center(child: Text("${data.currentDate}", style: TextStyle(fontSize: index >=15 ? 10 : 6))),
+                                Center(child: Text(data.remarkItem ?? "---", style: TextStyle(fontSize: index >=15 ? 10 : 6))),
+                                Center(child: Text("${data.loanedMoney ?? "--"}", style: TextStyle(color: Colors.redAccent, fontSize: index >=15 ? 10 : 6))),
+                                Center(child: Text("${data.receivedMoney ?? "--"}", style: TextStyle(color: Colors.green, fontSize: index >=15 ? 10 : 6))),
+                                Center(child: Text("500", style: TextStyle(fontSize: index >=15 ? 10 : 6))),
                               ],
                             );
                           }),
@@ -143,7 +148,7 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 10, left: 210),
-                        child: Text("5025"),
+                        child: Text("₹ 5025"),
                       ),
                     ],
                   ),
@@ -188,7 +193,7 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                                           ),
                                         ),
                                         child: profile.qrImage != null
-                                            ? Image.file(File(profile.qrImage!))
+                                            ? Image.file(File(profile.qrImage!),fit: BoxFit.cover,)
                                             : const Image(
                                             image: AssetImage("assets/images/shakil_upi_scaner.jpg")),
                                       ),
@@ -220,12 +225,14 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                                           border: Border.all(
                                               color: Colors.orangeAccent, width: 1),
                                         ),
-                                        child: const Image(
-                                            image: AssetImage("assets/images/u_udan_logo.webp")),
+                                        child:  profile.uploadStamp != null
+                                            ? Image.file(File(profile.uploadStamp!),fit: BoxFit.cover,)
+                                            : const Image(
+                                            image: AssetImage("assets/images/shakil_upi_scaner.jpg")),
                                       ),
                                     ),
                                   ),
-                                  const Text("My Profile",
+                                  const Text("My Stamp",
                                       style: TextStyle(color: Colors.orangeAccent)),
                                 ],
                               ),

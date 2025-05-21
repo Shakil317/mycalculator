@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:mycalculator/ViewModels/database_helper.dart';
 import 'package:mycalculator/models/creadit_debit_model.dart';
 import 'package:uuid/uuid.dart';
@@ -11,36 +12,50 @@ class TransitionHistoryProvider with ChangeNotifier{
   TextEditingController debitAmountController = TextEditingController();
   TextEditingController productRemarkController = TextEditingController();
   TextEditingController creditAmountController = TextEditingController();
+  final LocalAuthentication localAuth = LocalAuthentication();
+  late int allLoanedMoney  = 0;
 
-  void addToListUser() {
-    DatabaseHelper().getTransition().then((value) {
-      transitionList.addAll(value.map((transition) => CreditDebitModel.fromMap(transition)).toList());
-    });
+
+  var usersId = 0;
+
+  Future<void> addToListUser() async {
+    transitionList.clear();
+    final transitions = await DatabaseHelper().getTransition(userId: usersId);
+    transitionList.addAll(transitions.map((t) => CreditDebitModel.fromMap(t)).toList());
     notifyListeners();
   }
 
   void insertNewTransition(BuildContext context, {required String status}) async {
-    double debit = double.tryParse(debitAmountController.text) ?? 0.0 ;
-    double credit = double.tryParse(creditAmountController.text) ?? 0.0;
-    double allTransitionValue = debit - credit;
+    // double debit = double.tryParse(debitAmountController.text) ?? 0.0 ;
+    // double credit = double.tryParse(creditAmountController.text) ?? 0.0;
+    // double allTransitionValue = debit - credit;
     String generateId = const Uuid().v1();
     String creditId = generateId.replaceAll('-', '').substring(0, 6);
     String debitId = generateId.replaceAll('-', '').substring(0, 10);
-    //"creditId": DateTime.now().millisecond ~/ 100,
+    int loanedMoney = int.tryParse(debitAmountController.toString()) ?? 0;
+    int receivedMoney = int.tryParse(creditAmountController.toString()) ?? 0;
+    if (loanedMoney >= receivedMoney) {
+      allLoanedMoney = loanedMoney - receivedMoney;
+      print("Remaining loaned money: $allLoanedMoney");
+    } else {
+      allLoanedMoney = 0;
+      print("Full Paid Money");
+    }
     var addTransition = {
       "transitionID": DateTime.now().microsecondsSinceEpoch ~/ 10000,
       "debitId": debitId,
       "creditId": creditId,
+      "usersId":usersId,
       "loanedMoney": creditAmountController.text.toString(),
       "receivedMoney": debitAmountController.text.toString(),
       "remarkItem": productRemarkController.text.toString(),
       "currentDate":dateController.text.toString(),
       "currentTime":timeController.text.toString(),
       "status" : status.toString(),
-      "allTransition":allTransitionValue.toString(),
+      "allTransition":allLoanedMoney.toString(),
     };
     await DatabaseHelper().insertTransition(addTransition);
-    Fluttertoast.showToast(msg: 'New Transition  ${creditAmountController.text.toString()}/₹',toastLength: Toast.LENGTH_LONG,backgroundColor: Colors.orange,textColor: Colors.white70,fontSize: 20,);
+    Fluttertoast.showToast(msg: 'New Transition  ₹${status == "isReceive" ? creditAmountController.text.toString() : debitAmountController.text.toString()}',toastLength: Toast.LENGTH_LONG,backgroundColor: Colors.orange,textColor: Colors.white70,fontSize: 20,);
     showAmountTransition();
     notifyListeners();
     clearControllers();
@@ -54,9 +69,9 @@ class TransitionHistoryProvider with ChangeNotifier{
 
   void showAmountTransition() async {
     transitionList.clear();
-    List<Map<String, dynamic>> transitionData = await DatabaseHelper().getTransition();
+    List<Map<String, dynamic>> transitionData = await DatabaseHelper().getTransition(userId: usersId);
     transitionList.addAll(transitionData.map((user)=>CreditDebitModel.fromMap(user)).toList());
-    transitionList = List.from(transitionData);
+
     notifyListeners();
   }
   Future<void> selectedDate(BuildContext context) async{
@@ -87,10 +102,37 @@ class TransitionHistoryProvider with ChangeNotifier{
     }
     notifyListeners();
   }
+  void checkLocalAuthDeleteTransition(BuildContext context, var index)async{
+    bool isAvailable;
+    isAvailable = await localAuth.canCheckBiometrics;
+    Fluttertoast.showToast(msg: "is Available");
+    if(isAvailable){
+      bool results = await localAuth.authenticate(
+        localizedReason: "Scan Your Finger Print to Proceed",
+        options: const AuthenticationOptions(
+            useErrorDialogs: true
+        ),
+        //options:  AuthenticationOptions(biometricOnly: true),
+      );
+      if(results){
+        DatabaseHelper().deleteTransition(transitionList[index].transitionID!);
+        // deleteUser(filteredUsers[index].id!)
+        Navigator.pop(context);
+        showAmountTransition();
+      }else{
+        Fluttertoast.showToast(msg: "Permission Denied");
+      }
+    }else{
+      Fluttertoast.showToast(msg: "No Biometric sensor detected");
+    }
+
+  }
+
 
   void clearControllers(){
     productRemarkController.clear();
     creditAmountController.clear();
     debitAmountController.clear();
   }
+
 }

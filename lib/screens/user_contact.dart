@@ -9,8 +9,7 @@ import '../Utils/app_them.dart';
 import '../ViewModels/user_provider.dart';
 
 class UserContact extends StatefulWidget {
-   String searchName;
-    UserContact({super.key, required this.searchName});
+    UserContact({super.key,});
 
   @override
   State<UserContact> createState() => _UserContactState();
@@ -70,7 +69,7 @@ class _UserContactState extends State<UserContact>
                   cursorRadius: const Radius.circular(5.0),
                   controller: provider.searchController,
                   decoration: InputDecoration(
-                    hintText: "Search...${widget.searchName}",
+                    hintText: "Search...",
                     fillColor: Colors.white70,
                     iconColor: Colors.white70,
                     suffixIcon: IconButton(

@@ -47,7 +47,7 @@ class UserProvider with ChangeNotifier {
   void insertNewUser(BuildContext context,) async {
     int creditID = DateTime.now().microsecond ~/ 10;
     String userId = const Uuid().v4();
-    String imagePath = image != null ? image!.path : "assets/images/shakilansari.jpg";
+    String imagePath = image != null ? image!.path : Colors.green.toString();
     var addUser = {
       "userId_321": userId.replaceAll('-', ' ').substring(0,16),
       "image": imagePath,
@@ -60,6 +60,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
     clearController();
   }
+
 
   void deleteUser(BuildContext context, var index) async {
     await DatabaseHelper().deleteUser(users[index].id!);
@@ -83,7 +84,7 @@ class UserProvider with ChangeNotifier {
       "number": numberController.text.toString(),
     };
     await DatabaseHelper().updateUser(updateData, users[userId].id!);
-     AppRough.navigatePage(context, const UserScreens());
+    AppRough.navigatePage(context, const UserScreens());
     notifyListeners();
   }
 
@@ -99,21 +100,21 @@ class UserProvider with ChangeNotifier {
 
   Future<void> addNewUserWithFilter(BuildContext context, ContactProvider contactProvider) async {
     String enteredName =
-        nameController.text.trim();
+    nameController.text.trim();
     String enteredPhoneNumber =
-        numberController.text.trim();
+    numberController.text.trim();
     if (enteredName.isNotEmpty &&
         enteredPhoneNumber.isNotEmpty) {
       bool isPhoneNumberExist = contactProvider.contacts.any((contact) => contact.phones!.any(
               (phone) =>
-                  phone.value == enteredPhoneNumber));
+          phone.value == enteredPhoneNumber));
       bool isNameExist = contactProvider.contacts.any((contact) =>
-              contact.displayName == enteredName);
+      contact.displayName == enteredName);
       if (isPhoneNumberExist || isNameExist) {
         Fluttertoast.showToast(
             msg:
-                "This phone number or name already exists. please click on contactButton");
-        AppRough.navigatePage(context, UserContact(searchName: enteredName,));
+            "This phone number or name already exists. please click on contactButton");
+        AppRough.navigatePage(context, UserContact());
       } else {
         insertNewUser (context);
         Navigator.pop(context);
@@ -139,10 +140,10 @@ class UserProvider with ChangeNotifier {
     Fluttertoast.showToast(msg: "is Available");
     if(isAvailable){
       bool results = await localAuth.authenticate(
-          localizedReason: "Scan Your Finger Print to Proceed",
-          options: const AuthenticationOptions(
-              useErrorDialogs: true
-          ),
+        localizedReason: "Scan Your Finger Print to Proceed",
+        options: const AuthenticationOptions(
+            useErrorDialogs: true
+        ),
         //options:  AuthenticationOptions(biometricOnly: true),
       );
       if(results){

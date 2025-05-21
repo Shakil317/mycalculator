@@ -14,8 +14,8 @@ class TransitionHistoryScreen extends StatefulWidget {
   final String? name;
   final int? id;
   final String? image;
-  const TransitionHistoryScreen(
-      {super.key, this.name, this.id, this.image});
+  final String? usersData;
+  const TransitionHistoryScreen({super.key, this.name, this.id, this.image,this.usersData});
   @override
   State<TransitionHistoryScreen> createState() =>
       _TransitionHistoryScreenState();
@@ -28,25 +28,16 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
   void initState() {
     super.initState();
     creditProvider = Provider.of<TransitionHistoryProvider>(context,listen: false);
+    creditProvider.usersId = widget.id!;
+    creditProvider.transitionList.clear();
     creditProvider.showAmountTransition();
+
   }
 
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context,listen: false);
     creditProvider = Provider.of<TransitionHistoryProvider>(context,listen: false);
-    //var transition = creditProvider.transitionList[index];
-    List<Map<String, dynamic>> historyItems = List.generate(5, (index) {
-      //var transition = creditProvider.transitionList[index];
-      return {
-        'type': index % 2 == 0 ? 'receive' : 'loaned',
-        'message': index % 2 == 0 ? '${index + 1} ReceivedMoney' : '${index + 1} LoanedMoney',
-        'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        'time': DateFormat('hh:mm a').format(DateTime.now()),
-        'remarkItem': "remarkItem onLion",
-        'amount': "520",
-      };
-    });
     return Scaffold(
       backgroundColor:AppThem.appBgColor ,
       appBar: AppBar(
@@ -59,8 +50,9 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: CircleAvatar(
+            backgroundColor: Colors.green,
             radius: 15,
-            backgroundImage: widget.image != null && widget.image!.isEmpty
+            backgroundImage: widget.image != null && widget.image!.isNotEmpty
                 ? AssetImage(widget.image.toString())
                 : const AssetImage('assets/images/shakilansari.jpg'),
           ),
@@ -86,252 +78,263 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          var item = historyItems[index];
-          bool isReceived = item['type'] == 'receive';
-          return isReceived ?
-          Padding(
-            padding: const EdgeInsets.only(right: 10, left: 0),
-            child: GestureDetector(
-              onLongPress: () {
-                Fluttertoast.showToast(msg: "OnLongPress");
-              },
-              child: Card(
-                color: Colors.white70,
-                margin: const EdgeInsets.only(left: 5, right: 20, top: 5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(32),
-                    topLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(32),
-                    bottomLeft: Radius.circular(5),
-                  ),
-                  side: BorderSide(
-                    color: Colors.green,
-                    width: 2,
-                  ),
-                ),
-                child: ListTile(
-                  title:
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding:  EdgeInsets.only(right: 10),
-                              child: Text(
-                                "${item['message']}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isReceived ? Colors.green.shade900 : Colors.black,
-                                  fontSize: 21,
+      body: Consumer<TransitionHistoryProvider>(
+          builder: (context, data, child) {
+            data.transitionList.toSet().toList();
+            return ListView.builder(
+              itemCount: data.transitionList.length,
+              itemBuilder: (context, index) {
+                var item = data.transitionList[index];
+                bool isReceived = item.isReceived == 'isReceive';
+                return isReceived ?
+                Padding(
+                  padding: const EdgeInsets.only(right: 50, ),
+                  child: GestureDetector(
+                    onLongPress: () {
+                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                      Fluttertoast.showToast(msg: "OnLongPress");
+                    },
+                    child:
+                    Card(
+                      color: Colors.white70,
+                      margin: const EdgeInsets.only(left: 5, right: 20, top: 5),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(40),
+                          bottomRight: Radius.circular(32),
+                          bottomLeft: Radius.circular(5),
+                        ),
+                        side: BorderSide(
+                          color: Colors.green,
+                          width: 2,
+                        ),
+                      ),
+                      child: ListTile(
+                        title:
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      "ReceiveMoney",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isReceived ? Colors.green.shade900 : Colors.black,
+                                        fontSize: 18,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding:  const EdgeInsets.only(top: 10,),
-                            child: Text(
-                              "₹${item['amount']}/-",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: isReceived ? Colors.green.shade900 : Colors.black,
-                                fontSize: 21,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  subtitle:
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 0, top: 5, right: 10),
-                            child: Text(
-                              "Date: ${item['date']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: isReceived ? Colors.black : Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(  // Wrap Text widget inside Expanded to prevent overflow
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 5, right: 10),
-                              child: Text(
-                                "${item['remarkItem']}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16,
-                                  fontStyle:FontStyle.italic ,
-                                  color: isReceived ? Colors.black : Colors.black87,
+                                Padding(
+                                  padding:const EdgeInsets.only(top: 5,),
+                                  child: Text(
+                                    "₹${item.receivedMoney}/-",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isReceived ? Colors.green.shade900 : Colors.black,
+                                      fontSize: 21,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis, // Handle overflow
-                              ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        subtitle:
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding:  EdgeInsets.only(left: 0, top: 0, right: 10),
+                                  child: Text(
+                                    "Date:${item.currentDate}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isReceived ? Colors.black : Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(  // Wrap Text widget inside Expanded to prevent overflow
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 0, right: 10),
+                                    child: Text(
+                                      "${item.remarkItem}" ?? "",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16,
+                                        fontStyle:FontStyle.italic ,
+                                        color: isReceived ? Colors.black : Colors.black87,
+                                      ),
+                                      overflow: TextOverflow.ellipsis, // Handle overflow
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40, top: 0),
+                                  child: Text("Time ${item.currentTime}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: isReceived ? Colors.black : Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: Padding(
+                          padding: const EdgeInsets.only(bottom: 30.0),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.south_west_sharp,
+                              color: Colors.green,
+                              size: 21,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5),
-                            child: Text(
-                              "${item['time']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: isReceived ? Colors.black : Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.south_west_sharp,
-                      color: Colors.green,
-                      size: 30,
                     ),
                   ),
-                ),
-              ),
-            ),
-          )
-              : Padding(
-            padding: const EdgeInsets.only(left: 20,right:10),
-            child: GestureDetector(
-              onLongPress: () {
-                Fluttertoast.showToast(msg: "onLongPress");
-              },
-              child: Card(
-                color: Colors.white70,
-                margin: const EdgeInsets.only(left: 10, right: 0, top: 5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(0),topLeft: Radius.circular(30),bottomRight: Radius.circular(50),bottomLeft: Radius.circular(30)),
-                  side: BorderSide(
-                    color: Colors.blueAccent,
-                    width: 2,
-                  ),
-                ),
-                child: ListTile(
-                  title:
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding:  const EdgeInsets.only(right: 10),
-                              child: Text(
-                                "${item['message']}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isReceived ? Colors.green.shade900 : Colors.red,
-                                  fontSize: 21,
+                ) :
+                Padding(
+                  padding: const EdgeInsets.only(left: 50,right: 5),
+                  child: GestureDetector(
+                    onLongPress: () {
+                      Fluttertoast.showToast(msg: "onLongPress");
+                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                    },
+                    child: Card(
+                      color: Colors.white70,
+                      margin: const EdgeInsets.only(left: 10, right: 0, top: 5),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(0),topLeft: Radius.circular(30),bottomRight: Radius.circular(50),bottomLeft: Radius.circular(30)),
+                        side: BorderSide(
+                          color: Colors.blueAccent,
+                          width: 2,
+                        ),
+                      ),
+                      child: ListTile(
+                        title:
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:  const EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      "LoanedMoney",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isReceived ? Colors.green.shade900 : Colors.red,
+                                        fontSize: 18,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "₹${item['amount']}/-",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isReceived ? Colors.green.shade900 : Colors.red,
-                              fontSize: 21,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  subtitle:
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 0, top: 5, right: 10),
-                            child: Text(
-                              "Date: ${item['date']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: isReceived ? Colors.black : Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(  // Wrap Text widget inside Expanded to prevent overflow
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 5, right: 10),
-                              child: Text(
-                                "${item['remarkItem']}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16,
-                                  fontStyle:FontStyle.italic ,
-                                  color: isReceived ? Colors.black : Colors.black87,
+                                Text(
+                                  "₹${item.loanedMoney}/-",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isReceived ? Colors.green.shade900 : Colors.red,
+                                    fontSize: 21,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                                overflow: TextOverflow.ellipsis, // Handle overflow
-                              ),
+                              ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5),
-                            child: Text(
-                              "${item['time']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: isReceived ? Colors.black : Colors.black87,
-                              ),
+                          ],
+                        ),
+                        subtitle:
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding:  EdgeInsets.only(left: 0, top: 0, right: 10),
+                                  child: Text(
+                                    "Date: ${item.currentDate}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isReceived ? Colors.black : Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  trailing: IconButton(
-                      onPressed: () {
+                            Row(
+                              children: [
+                                Expanded(  // Wrap Text widget inside Expanded to prevent overflow
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(top: 0, right: 10),
+                                    child: Text(
+                                      "${item.remarkItem}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16,
+                                        fontStyle:FontStyle.italic ,
+                                        color: isReceived ? Colors.black : Colors.black87,
+                                      ),
+                                      overflow: TextOverflow.ellipsis, // Handle overflow
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:  EdgeInsets.only(left: 10, top: 0),
+                                  child: Text(
+                                    "Time : ${item.currentTime}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: isReceived ? Colors.black : Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: Padding(
+                          padding: const EdgeInsets.only(bottom: 30.0),
+                          child: IconButton(
+                              onPressed: () {
 
-                      },
-                      icon: const Icon(
-                        Icons.north_east_rounded,
-                        color: Colors.redAccent,
-                        size: 30,
-                      )),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+                              },
+                              icon: const Icon(
+                                Icons.north_east_rounded,
+                                color: Colors.redAccent,
+                                size: 21,
+                              )),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );  }),
       bottomNavigationBar: Container(
         width: MediaQuery.of(context).size.width * 1,
         height: MediaQuery.of(context).size.width / 4,
         decoration: const BoxDecoration(
             color: Color(0xff010c17),
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -372,7 +375,22 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                 )
               ],
             ),
-            const SizedBox(width: 80),
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text("Your Collections",style: TextStyle(fontSize: 12,color: Colors.white,fontWeight: FontWeight.bold),),
+                ),
+                Row(
+                  children: [
+                    Center(child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text("\u20B9 ${creditProvider.allLoanedMoney}",style: TextStyle(fontSize: 20,color: Colors.redAccent.shade200),),
+                    ),),
+                  ],
+                ),
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -421,7 +439,6 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
       context,
       listen: false,
     );
-
     showDialog(
       context: context,
       builder: (context) {
@@ -630,5 +647,4 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
       },
     );
   }
-
 }

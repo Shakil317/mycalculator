@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
@@ -16,11 +17,9 @@ import '../Utils/app_them.dart';
 
 class UserScreens extends StatefulWidget {
   final String? name;
-  final String? currentDate;
   final String? result;
-
-  const UserScreens({super.key, this.name, this.currentDate, this.result});
-
+  final String? userData;
+  const UserScreens({super.key, this.name, this.result,this.userData});
   @override
   State<UserScreens> createState() => _UserScreensState();
 }
@@ -73,8 +72,9 @@ class _UserScreensState extends State<UserScreens> {
                           itemBuilder: (context, index) {
                             final item = profile[index];
                             final hasImage = item.profileImage != null && item.profileImage!.isNotEmpty;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            return
+                              Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -82,30 +82,39 @@ class _UserScreensState extends State<UserScreens> {
                                     radius: 30,
                                     backgroundColor: Colors.green,
                                     foregroundImage: hasImage
-                                        ? FileImage(File(item.profileImage!))
-                                        : const AssetImage('assets/images/shakilansari.jpg')
-                                    as ImageProvider,
+                                        ? (item.profileImage!.startsWith('assets/')
+                                        ? AssetImage(item.profileImage!)
+                                        : FileImage(File(item.profileImage!)))
+                                        : const AssetImage('assets/images/main_home_image.jpeg'),
+
                                   ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    item.shopName ?? "ABC Store",
-                                    style: const TextStyle(fontSize: 20, color: Colors.white),
+                                  const SizedBox(width:10),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 12.0),
+                                      child: Text(
+                                        item.shopName ?? "ABC Store",
+                                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                                        overflow: TextOverflow.visible,
+                                        softWrap: false,
+                                        maxLines: 2,
+                                      ),
+                                    ),
                                   ),
+
                                 ],
                               ),
                             );
                           },
                         ),
-
                       )),
                   const Positioned(
-                      top: 110,
+                      top: 120,
                       left: 62,
                       child: CircleAvatar(
                         radius: 10,
                         backgroundImage:
-                            AssetImage("assets/images/Calculator_512.png"),
-                      ))
+                        AssetImage("assets/images/Calculator_512.png"),))
                 ],
               ),
               Row(
@@ -235,7 +244,7 @@ class _UserScreensState extends State<UserScreens> {
                     child: CircleAvatar(
                       radius: 10,
                       backgroundImage:
-                          AssetImage("assets/images/Calculator_512.png"),
+                      AssetImage("assets/images/Calculator_512.png"),
                     ),
                   ),
                   TextButton(
@@ -261,8 +270,7 @@ class _UserScreensState extends State<UserScreens> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: Text(
-              "${widget.currentDate}.-${widget.result.toString()}र",
+            child: Text("${widget.result.toString()}र",
               style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -323,7 +331,7 @@ class _UserScreensState extends State<UserScreens> {
             child: ListView.builder(
               itemCount: userProvider.filteredUsers.length,
               itemBuilder: (context, index) {
-                var user = userProvider.filteredUsers[index];
+                var user =   userProvider.filteredUsers[index];
                 return Column(
                   children: [
                     ListTile(
@@ -376,12 +384,12 @@ class _UserScreensState extends State<UserScreens> {
                       title: Text(
                         user.name ?? widget.name!,
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
+                        const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       subtitle: Row(
                         children: [
                           Text(
-                            user.number ?? widget.currentDate!,
+                            user.number.toString(),
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 15),
                           ),
@@ -400,7 +408,7 @@ class _UserScreensState extends State<UserScreens> {
                               ),
                               Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 35, top: 5),
+                                const EdgeInsets.only(left: 35, top: 5),
                                 child: Text(
                                   "505/",
                                   style: TextStyle(
@@ -418,31 +426,31 @@ class _UserScreensState extends State<UserScreens> {
                             radius: 25,
                             backgroundColor: Colors.green,
                             backgroundImage:
-                                (user.image == null || user.image!.isEmpty)
-                                    ? null
-                                    : FileImage(File(user.image!)),
+                            (user.image == null || user.image!.isEmpty)
+                                ? null
+                                : AssetImage(user.image.toString()),
                             child: (user.image == null || user.image!.isEmpty)
                                 ? Center(
-                                    child: Text(
-                                      user.name != null && user.name!.isNotEmpty
-                                          ? user.name![0].toUpperCase()
-                                          : "",
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: Colors.white, // Text color
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
+                              child: Text(
+                                user.name != null && user.name!.isNotEmpty
+                                    ? user.name![0].toUpperCase()
+                                    : "",
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.white, // Text color
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
                                 : Center(
-                                    child: Text(
-                                      user.name![0].toUpperCase(),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 20),
-                                    ),
-                                  ),
+                              child: Text(
+                                user.name![0].toUpperCase(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 20),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -452,7 +460,7 @@ class _UserScreensState extends State<UserScreens> {
                           PopupMenuItem(
                             child: ListTile(
                               leading:
-                                  const Icon(Icons.call, color: Colors.green),
+                              const Icon(Icons.call, color: Colors.green),
                               title: const Text("Calling",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.blue)),
@@ -472,7 +480,7 @@ class _UserScreensState extends State<UserScreens> {
                                       fontSize: 14, color: Colors.blue)),
                               onTap: () async {
                                 final sms =
-                                    Uri.parse('sms:${user.number.toString()}');
+                                Uri.parse('sms:${user.number.toString()}');
                                 if (await canLaunchUrl(sms)) {
                                   launchUrl(sms);
                                 } else {

@@ -35,7 +35,7 @@ class MyProfileModel {
     location: json["location"],
     qrImage: json["qrImage"],
     uploadStamp: json["uploadStamp"],
-    profileImage: json["profileImage"],
+    profileImage: json["prImage"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -47,6 +47,6 @@ class MyProfileModel {
     "location": location,
     "qrImage": qrImage,
     "uploadStamp": uploadStamp,
-    "profileImage": profileImage,
+    "prImage": profileImage,
   };
 }

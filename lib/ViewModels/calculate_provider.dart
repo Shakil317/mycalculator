@@ -46,7 +46,7 @@ class CalculateProvider with ChangeNotifier {
         //options:const AuthenticationOptions(biometricOnly: true),
       );
       if(results){
-        AppRough.navigatePage(context, UserScreens(currentDate: DateFormat('hh:mm a').format(DateTime.now()), result:result));
+        AppRough.navigatePage(context, UserScreens(result:result));
       }else{
         Fluttertoast.showToast(msg: "Permission Denied");
       }

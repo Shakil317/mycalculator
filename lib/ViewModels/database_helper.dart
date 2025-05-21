@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  // User Details
+  /// User Details
   static const dbName = "NoteBook.db";
   static const dbVersion = 2;
   static const tableName = "Users";
@@ -12,7 +12,7 @@ class DatabaseHelper {
   static const  userId = "userId_321";
   static const image = "image";
 
-  // User Transition Details
+  /// User Transition Details
   static const transactionsTable = "TransactionsHistory";
   static const receiveMoney = "receivedMoney";
   static const loanedMoney = "loanedMoney";
@@ -24,8 +24,9 @@ class DatabaseHelper {
   static const transitionId = "transitionId";
   static const type = "status";
   static const myCollation = "allTransition";
+  static const usersID = "usersId";
 
-  // User Profile Details
+  /// User Profile Details
   static const myProfileTable = "profile";
   static const  profileId = "profileId";
   static const  shopName = "shopName";
@@ -43,17 +44,17 @@ class DatabaseHelper {
       version: dbVersion,
       onCreate: (db, version) {
         db.execute("CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT)");
-        db.execute("CREATE TABLE $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT,$debitId INTEGER,$creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT, $myCollation TEXT)");
+        db.execute("CREATE TABLE $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT,$debitId INTEGER,$creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT, $myCollation TEXT, $usersID TEXT)");
         db.execute("CREATE TABLE $myProfileTable($profileId TEXT PRIMARY KEY,$shopName TEXT,$profileContact TEXT, $bankInfo TEXT, $prImage TEXT, $qrImage TEXT,$uploadStamp TEXT)");
       },
       onUpgrade: (db, oldVersion, newVersion) {
-        if (oldVersion < 2) {
+        if (oldVersion < 3) {
           db.execute(
-              "CREATE TABLE IF NOT EXISTS $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT, $debitId INTEGER, $creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT,  $myCollation TEXT)");
+              "CREATE TABLE IF NOT EXISTS $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT, $debitId INTEGER, $creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT,  $myCollation TEXT, $usersID TEXT)");
           db.execute(
               "CREATE TABLE IF NOT EXISTS $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT)");
           db.execute(
-            "CREATE TABLE IF NOT EXISTS $myProfileTable($profileId TEXT PRIMARY KEY,$shopName TEXT,$profileContact TEXT, $bankInfo TEXT, $prImage TEXT, $qrImage TEXT, $uploadStamp TEXT)");
+              "CREATE TABLE IF NOT EXISTS $myProfileTable($profileId TEXT PRIMARY KEY,$shopName TEXT,$profileContact TEXT, $bankInfo TEXT, $prImage TEXT, $qrImage TEXT, $uploadStamp TEXT)");
         }
       },
     );
@@ -71,6 +72,7 @@ class DatabaseHelper {
     var db = await insertDatabase();
     return await  db.delete(tableName, where: "id=?",whereArgs: [id]);
   }
+
 
   Future<List<Map<String,dynamic>>> getUser()async{
     var db = await insertDatabase();
@@ -90,12 +92,18 @@ class DatabaseHelper {
     return await  db.delete(transactionsTable, where: "transitionId=?",whereArgs: [transitionDeleteId]);
   }
 
-  Future<List<Map<String,dynamic>>> getTransition()async{
+  /// await db.query('transitions', where: 'userId = ?', whereArgs: [userId]);
+  //db.query(transactionsTable)
+  Future<List<Map<String,dynamic>>> getTransition({required var userId})async{
+
+    print("check userid :: $userId");
     var db = await insertDatabase();
-    return   db.query(transactionsTable);
+    return   db.query(transactionsTable,
+      where: 'usersId = ?',
+      whereArgs: [userId],);
   }
 
-//Insert  Profile
+  ///Insert  Profile
   Future<int> insertMyProfile(Map<String, dynamic> myProfile)async{
     var db = await insertDatabase();
     return  db.insert(myProfileTable, myProfile);

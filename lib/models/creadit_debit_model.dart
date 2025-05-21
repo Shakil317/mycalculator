@@ -1,13 +1,13 @@
 class CreditDebitModel {
-  final int? transitionID;
-  final int? creditId;
-  final int? debitId;
-  final String remarkItem;
-  final String loanedMoney;
-  final String receivedMoney;
-  final String currentDate;
-  final String currentTime;
-  final String isReceived;
+  final dynamic transitionID;
+  final dynamic creditId;
+  final dynamic debitId;
+  final String? remarkItem;
+  final String? loanedMoney;
+  final String? receivedMoney;
+  final String? currentDate;
+  final String? currentTime;
+  final String? isReceived;
   CreditDebitModel({
     this.transitionID,
     this.creditId,
@@ -27,9 +27,9 @@ class CreditDebitModel {
       debitId: map['debitId'],
       loanedMoney: map['loanedMoney'],
       receivedMoney: map['receivedMoney'],
-      currentDate: map['dateTime'],
+      currentDate: map['currentDate'],
       currentTime: map['currentTime'],
-      isReceived: map['isReceived '],
+      isReceived: map['status'],
     );
   }
   Map<String, dynamic> toMap() {
@@ -40,7 +40,7 @@ class CreditDebitModel {
       'debitId': debitId,
       'loanedMoney': loanedMoney,
       'receivedMoney': receivedMoney,
-      'dateTime': currentDate,
+      'currentDate': currentDate,
       'currentTime': currentTime,
     };
   }
