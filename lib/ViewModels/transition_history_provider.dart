@@ -12,35 +12,38 @@ class TransitionHistoryProvider with ChangeNotifier{
   TextEditingController debitAmountController = TextEditingController();
   TextEditingController productRemarkController = TextEditingController();
   TextEditingController creditAmountController = TextEditingController();
-  final LocalAuthentication localAuth = LocalAuthentication();
-  late int allLoanedMoney  = 0;
-
-
+  ScrollController transitionScrollController = ScrollController();
   var usersId = 0;
-
+  final LocalAuthentication localAuth = LocalAuthentication();
+   int yourCollectionData  = 0;
   Future<void> addToListUser() async {
     transitionList.clear();
     final transitions = await DatabaseHelper().getTransition(userId: usersId);
     transitionList.addAll(transitions.map((t) => CreditDebitModel.fromMap(t)).toList());
     notifyListeners();
   }
-
   void insertNewTransition(BuildContext context, {required String status}) async {
-    // double debit = double.tryParse(debitAmountController.text) ?? 0.0 ;
-    // double credit = double.tryParse(creditAmountController.text) ?? 0.0;
-    // double allTransitionValue = debit - credit;
     String generateId = const Uuid().v1();
     String creditId = generateId.replaceAll('-', '').substring(0, 6);
     String debitId = generateId.replaceAll('-', '').substring(0, 10);
     int loanedMoney = int.tryParse(debitAmountController.toString()) ?? 0;
     int receivedMoney = int.tryParse(creditAmountController.toString()) ?? 0;
-    if (loanedMoney >= receivedMoney) {
-      allLoanedMoney = loanedMoney - receivedMoney;
-      print("Remaining loaned money: $allLoanedMoney");
-    } else {
-      allLoanedMoney = 0;
-      print("Full Paid Money");
-    }
+
+   // void showAmountTransitionCollection() async {
+   //   for(var i = transitionList.length; i< loanedMoney; i++){
+   //     for(var j = transitionList.length+1 ; j <= receivedMoney; j++){
+   //       if (i >= j) {
+   //         // yourCollectionData = loanedMoney - receivedMoney;
+   //         yourCollectionData += loanedMoney;
+   //         Fluttertoast.showToast(msg: "Your Collection is : ${yourCollectionData}");
+   //         print("Remaining loaned money: $yourCollectionData");
+   //       } else {
+   //         yourCollectionData = 0;
+   //         print("Full Paid Money");
+   //       }
+   //     }
+   //   }
+   // }
     var addTransition = {
       "transitionID": DateTime.now().microsecondsSinceEpoch ~/ 10000,
       "debitId": debitId,
@@ -52,11 +55,20 @@ class TransitionHistoryProvider with ChangeNotifier{
       "currentDate":dateController.text.toString(),
       "currentTime":timeController.text.toString(),
       "status" : status.toString(),
-      "allTransition":allLoanedMoney.toString(),
+      "allTransition":yourCollectionData.toString(),
     };
     await DatabaseHelper().insertTransition(addTransition);
     Fluttertoast.showToast(msg: 'New Transition  ₹${status == "isReceive" ? creditAmountController.text.toString() : debitAmountController.text.toString()}',toastLength: Toast.LENGTH_LONG,backgroundColor: Colors.orange,textColor: Colors.white70,fontSize: 20,);
     showAmountTransition();
+    Future.delayed(Duration(milliseconds: 200), () {
+      if (transitionScrollController.hasClients) {
+        transitionScrollController.animateTo(
+          transitionScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
     notifyListeners();
     clearControllers();
   }
@@ -71,7 +83,17 @@ class TransitionHistoryProvider with ChangeNotifier{
     transitionList.clear();
     List<Map<String, dynamic>> transitionData = await DatabaseHelper().getTransition(userId: usersId);
     transitionList.addAll(transitionData.map((user)=>CreditDebitModel.fromMap(user)).toList());
-
+    int totalLoanedMoney = 0;
+    int totalReceivedMoney = 0;
+    for (var element in transitionList) {
+      if (element.loanedMoney != null && element.loanedMoney!.isNotEmpty) {
+        totalLoanedMoney += int.tryParse(element.loanedMoney!) ?? 0;
+      }
+      if (element.receivedMoney != null && element.receivedMoney!.isNotEmpty) {
+        totalReceivedMoney += int.tryParse(element.receivedMoney!) ?? 0;
+      }
+    }
+    yourCollectionData = totalLoanedMoney - totalReceivedMoney;
     notifyListeners();
   }
   Future<void> selectedDate(BuildContext context) async{

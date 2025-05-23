@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
-import 'package:mycalculator/ViewModels/user_provider.dart';
 import 'package:mycalculator/app_rough.dart';
 import 'package:mycalculator/calculator_screens/calculator_screen.dart';
 import 'package:mycalculator/screens/downloas_pdf_screen.dart';
@@ -36,7 +36,6 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var userProvider = Provider.of<UserProvider>(context,listen: false);
     creditProvider = Provider.of<TransitionHistoryProvider>(context,listen: false);
     return Scaffold(
       backgroundColor:AppThem.appBgColor ,
@@ -53,7 +52,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
             backgroundColor: Colors.green,
             radius: 15,
             backgroundImage: widget.image != null && widget.image!.isNotEmpty
-                ? AssetImage(widget.image.toString())
+                ? FileImage(File(widget.image.toString()))
                 : const AssetImage('assets/images/shakilansari.jpg'),
           ),
         ),
@@ -82,6 +81,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
           builder: (context, data, child) {
             data.transitionList.toSet().toList();
             return ListView.builder(
+              controller: data.transitionScrollController,
               itemCount: data.transitionList.length,
               itemBuilder: (context, index) {
                 var item = data.transitionList[index];
@@ -328,105 +328,107 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                 );
               },
             );  }),
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width * 1,
-        height: MediaQuery.of(context).size.width / 4,
-        decoration: const BoxDecoration(
-            color: Color(0xff010c17),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    showAppDialog(dialogTitle: "Received Money" , controllerType: creditProvider.debitAmountController, states: 'isReceive');
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      height: 50,
-                      width: 130,
-                      decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.arrow_downward,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                          Text(
-                            "Receive",
-                            style: TextStyle(
+      bottomNavigationBar: Consumer<TransitionHistoryProvider>(builder: (context, value, child) {
+        return Container(
+          width: MediaQuery.of(context).size.width * 1,
+          height: MediaQuery.of(context).size.width / 4,
+          decoration: const BoxDecoration(
+              color: Color(0xff010c17),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      showAppDialog(dialogTitle: "Received Money" , controllerType: creditProvider.debitAmountController, states: 'isReceive');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        height: 50,
+                        width: 130,
+                        decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.arrow_downward,
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              size: 30,
                             ),
-                          ),
-                        ],
+                            Text(
+                              "Receive",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                  )
+                ],
+              ),
+              Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text("Your Collections",style: TextStyle(fontSize: 12,color: Colors.white,fontWeight: FontWeight.bold),),
                   ),
-                )
-              ],
-            ),
-            Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text("Your Collections",style: TextStyle(fontSize: 12,color: Colors.white,fontWeight: FontWeight.bold),),
-                ),
-                Row(
-                  children: [
-                    Center(child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text("\u20B9 ${creditProvider.allLoanedMoney}",style: TextStyle(fontSize: 20,color: Colors.redAccent.shade200),),
-                    ),),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.creditAmountController, states: 'isLoaned');
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      height: 50,
-                      width: 130,
-                      decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.arrow_upward,
-                            color: Colors.white,size: 30,),
-                          Text(
-                            "Loaned",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                  Row(
+                    children: [
+                      Center(child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text("\u20B9 ${creditProvider.yourCollectionData}",style: TextStyle(fontSize: 20,color: Colors.redAccent.shade200),),
+                      ),),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.creditAmountController, states: 'isLoaned');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        height: 50,
+                        width: 130,
+                        decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.arrow_upward,
+                              color: Colors.white,size: 30,),
+                            Text(
+                              "Loaned",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },),
     );
   }
 

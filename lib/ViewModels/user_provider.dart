@@ -47,7 +47,7 @@ class UserProvider with ChangeNotifier {
   void insertNewUser(BuildContext context,) async {
     int creditID = DateTime.now().microsecond ~/ 10;
     String userId = const Uuid().v4();
-    String imagePath = image != null ? image!.path : Colors.green.toString();
+    String? imagePath = image?.path;
     var addUser = {
       "userId_321": userId.replaceAll('-', ' ').substring(0,16),
       "image": imagePath,

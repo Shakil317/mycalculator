@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../ViewModels/transition_history_provider.dart';
 import '../ViewModels/user_profile_provider.dart';
@@ -54,33 +53,33 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                       color: Colors.pink.shade200,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20, top: 10),
+                      padding: const EdgeInsets.only(left: 10, top: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InstaImageViewer(
                             child: CircleAvatar(
                               radius: 25,
-                              backgroundImage: profile.uploadStamp != null
-                                  ? FileImage(File(profile.uploadStamp!))
+                              backgroundImage: profile.profileImage != null
+                                  ? FileImage(File(profile.profileImage!))
                                   : const AssetImage("assets/images/shakilansari.jpg"),
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                profile.shopName ?? "ABC Store",
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              Padding(
+                                padding:  EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  profile.shopName ?? "ABC Store",
+                                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 21),
+                                ),
                               ),
-                              const SizedBox(height: 4),
                               Row(
                                 children: [
                                   const Icon(Icons.location_on,
                                       color: Colors.pink, size: 12),
                                   Text(profile.bankInfo ?? "ABC Area"),
-                                  const SizedBox(width: 5),
                                   const Icon(Icons.phone,
                                       color: Colors.pink, size: 12),
                                   Text(profile.phone ?? "6206731567"),
@@ -140,15 +139,15 @@ class _DownloadsPdfScreenState extends State<DownloadsPdfScreenState> {
                   ),
 
                   // Total Row
-                  const Row(
+                   Row(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(top: 10, left: 10),
                         child: Text("Total Amount"),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10, left: 210),
-                        child: Text("₹ 5025"),
+                        padding:  EdgeInsets.only(top: 10, left: 200,),
+                        child: Text("₹ ${creditProvider.yourCollectionData}"),
                       ),
                     ],
                   ),

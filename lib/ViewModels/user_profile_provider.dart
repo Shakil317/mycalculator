@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +12,6 @@ class UserProfileProvider with ChangeNotifier {
   TextEditingController phoneController = TextEditingController();
   TextEditingController bankInfoController = TextEditingController();
   bool get isProfileExist => userProfile.isNotEmpty;
-
   XFile? qrImage;
   XFile? prImage;
   XFile? stampImage;
@@ -83,6 +84,46 @@ class UserProfileProvider with ChangeNotifier {
       Fluttertoast.showToast(msg: 'Failed to update profile: $e');
     }
   }
+
+  Future<void> createOrUpdateProfile(BuildContext context) async {
+    final shopName = shopNameController.text.trim();
+    final phone = phoneController.text.trim();
+    final bankInfo = bankInfoController.text.trim();
+
+    if (shopName.isEmpty || phone.isEmpty || bankInfo.isEmpty) {
+      Fluttertoast.showToast(msg: "Please fill all required fields.");
+      return;
+    }
+
+    final profileMap = {
+      "shopName": shopName,
+      "phone": phone,
+      "bankInfo": bankInfo,
+      "qrImage": qrImage?.path ?? '',
+      "profileImage": prImage?.path ?? '',
+      "uploadStamp": stampImage?.path ?? '',
+    };
+
+    if (userProfile.isEmpty) {
+      // CREATE
+      String profileUuID = const Uuid().v4();
+      String profileId = profileUuID.replaceAll('-', '').substring(0, 6);
+      profileMap['profileId'] = profileId;
+
+      await DatabaseHelper().insertMyProfile(profileMap);
+      Fluttertoast.showToast(msg: 'Profile Created Successfully!');
+    } else {
+      // UPDATE
+      final profileId = userProfile[0].id;
+      await DatabaseHelper().updateMyProfile(profileMap, profileId!);
+      Fluttertoast.showToast(msg: 'Profile Updated Successfully!');
+    }
+
+     showProfileData();
+    clearController();
+    notifyListeners();
+  }
+
 
 
   void showProfileData() async {
