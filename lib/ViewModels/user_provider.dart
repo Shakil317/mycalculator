@@ -5,6 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:mycalculator/app_rough.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:uuid/uuid.dart';
+
 import '../models/users_model.dart';
 import '../screens/user_contact.dart';
 import 'contact_provider.dart';
@@ -24,16 +25,17 @@ class UserProvider with ChangeNotifier {
   }
 
   void _onSearchChanged() {
-    searchUsers(searchController.text.toString());
+    searchUsers(searchController.text.trim());
   }
-
 
   void searchUsers(String query) {
     if (query.isEmpty) {
       filteredUsers = List.from(users);
     } else {
       filteredUsers = users.where((user) {
-        return user.name!.toLowerCase().contains(query.toLowerCase()) || user.number!.contains(query);}).toList();
+        return user.name!.toLowerCase().contains(query.toLowerCase()) ||
+            user.number!.contains(query);
+      }).toList();
     }
     notifyListeners();
   }
@@ -41,28 +43,27 @@ class UserProvider with ChangeNotifier {
   void addToListUser() {
     DatabaseHelper().getUser().then((value) {
       users.addAll(value.map((user) => UsersModel.fromMap(user)).toList());
+      notifyListeners();
     });
-    notifyListeners();
   }
-  void insertNewUser(BuildContext context,) async {
-    int creditID = DateTime.now().microsecond ~/ 10;
+
+  void insertNewUser(BuildContext context) async {
     String userId = const Uuid().v4();
     String? imagePath = image?.path;
     var addUser = {
-      "userId_321": userId.replaceAll('-', ' ').substring(0,16),
+      "userId_321": userId.replaceAll('-', ' ').substring(0, 10),
       "image": imagePath,
-      "name": nameController.text.toString(),
-      "number": numberController.text.toString(),
+      "name": nameController.text.trim(),
+      "number": numberController.text.trim(),
     };
     await DatabaseHelper().insertUser(addUser);
-    Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.toString()}');
+    Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.trim()}');
     showData();
-    notifyListeners();
     clearController();
+    notifyListeners();
   }
 
-
-  void deleteUser(BuildContext context, var index) async {
+  void deleteUser(BuildContext context, int index) async {
     await DatabaseHelper().deleteUser(users[index].id!);
     Navigator.pop(context);
     showData();
@@ -74,17 +75,6 @@ class UserProvider with ChangeNotifier {
     List<Map<String, dynamic>> userList = await DatabaseHelper().getUser();
     users.addAll(userList.map((user) => UsersModel.fromMap(user)).toList());
     filteredUsers = List.from(users);
-    notifyListeners();
-  }
-  void updateUsers(BuildContext context, var userId) async{
-    var updateData = {
-      "userId_321": userId,
-      "image": image!.path,
-      "name": nameController.text.toString(),
-      "number": numberController.text.toString(),
-    };
-    await DatabaseHelper().updateUser(updateData, users[userId].id!);
-    AppRough.navigatePage(context, const UserScreens());
     notifyListeners();
   }
 
@@ -99,70 +89,105 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> addNewUserWithFilter(BuildContext context, ContactProvider contactProvider) async {
-    String enteredName =
-    nameController.text.trim();
-    String enteredPhoneNumber =
-    numberController.text.trim();
-    if (enteredName.isNotEmpty &&
-        enteredPhoneNumber.isNotEmpty) {
-      bool isPhoneNumberExist = contactProvider.contacts.any((contact) => contact.phones!.any(
-              (phone) =>
-          phone.value == enteredPhoneNumber));
+    String enteredName = nameController.text.trim();
+    String enteredPhoneNumber = numberController.text.trim();
+
+    if (enteredName.isNotEmpty && enteredPhoneNumber.isNotEmpty) {
+      bool isPhoneNumberExist = contactProvider.contacts.any((contact) =>
+          contact.phones.any((phone) =>
+          phone.number.replaceAll(RegExp(r'\D'), '') == enteredPhoneNumber));
       bool isNameExist = contactProvider.contacts.any((contact) =>
-      contact.displayName == enteredName);
+      contact.displayName?.toLowerCase() == enteredName.toLowerCase());
+
       if (isPhoneNumberExist || isNameExist) {
         Fluttertoast.showToast(
-            msg:
-            "This phone number or name already exists. please click on contactButton");
-        AppRough.navigatePage(context, UserContact());
+            msg: "This phone number or name already exists. Please click on contact button.");
+        AppRough.navigatePage(context, const UserContact());
       } else {
-        insertNewUser (context);
+        insertNewUser(context);
         Navigator.pop(context);
         clearController();
-
       }
     } else {
-      Fluttertoast.showToast(
-          msg: "Please fill all fields.");
+      Fluttertoast.showToast(msg: "Please fill all fields.");
     }
   }
+
   @override
   void dispose() {
     searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    nameController.dispose();
+    numberController.dispose();
     super.dispose();
   }
 
-
-
-  void checkLocalAuth(BuildContext context, var index)async{
-    bool isAvailable;
-    isAvailable = await localAuth.canCheckBiometrics;
+  void checkLocalAuthUpdate(BuildContext context, UsersModel userModel) async {
+    bool isAvailable = await localAuth.canCheckBiometrics;
     Fluttertoast.showToast(msg: "is Available");
-    if(isAvailable){
+
+    if (isAvailable) {
       bool results = await localAuth.authenticate(
         localizedReason: "Scan Your Finger Print to Proceed",
-        options: const AuthenticationOptions(
-            useErrorDialogs: true
-        ),
-        //options:  AuthenticationOptions(biometricOnly: true),
+        options: const AuthenticationOptions(useErrorDialogs: true),
       );
-      if(results){
-        DatabaseHelper()
-            .deleteUser(filteredUsers[index].id!);
-        Navigator.pop(context);
+
+      if (results) {
+        if (userModel.id == null) {
+          Fluttertoast.showToast(msg: "Invalid user ID");
+          return;
+        }
+
+        var updateData = {
+          "name": nameController.text.trim(),
+          "number": numberController.text.trim(),
+        };
+
+        if (image != null) {
+          updateData["image"] = image!.path;
+        } else if (userModel.image != null) {
+          updateData["image"] = userModel.image!;
+        }
+
+        DatabaseHelper().updateUser(updateData, userModel.id!);
+        Fluttertoast.showToast(msg: "User updated successfully");
         showData();
-      }else{
+        AppRough.navigatePage(context, const UserScreens());
+        clearController();
+        notifyListeners();
+      } else {
         Fluttertoast.showToast(msg: "Permission Denied");
       }
-    }else{
+    } else {
       Fluttertoast.showToast(msg: "No Biometric sensor detected");
     }
-
   }
-  void clearController(){
+
+  void checkLocalAuthAndDeleteUser(BuildContext context, int index) async {
+    bool isAvailable = await localAuth.canCheckBiometrics;
+    Fluttertoast.showToast(msg: "is Available");
+
+    if (isAvailable) {
+      bool results = await localAuth.authenticate(
+        localizedReason: "Scan Your Finger Print to Proceed",
+        options: const AuthenticationOptions(useErrorDialogs: true),
+      );
+
+      if (results) {
+        DatabaseHelper().deleteUser(filteredUsers[index].id!);
+        Navigator.pop(context);
+        showData();
+      } else {
+        Fluttertoast.showToast(msg: "Permission Denied");
+      }
+    } else {
+      Fluttertoast.showToast(msg: "No Biometric sensor detected");
+    }
+  }
+
+  void clearController() {
     nameController.clear();
     numberController.clear();
     image = null;
   }
-
 }

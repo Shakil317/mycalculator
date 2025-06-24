@@ -22,7 +22,7 @@ class TransitionHistoryScreen extends StatefulWidget {
 }
 
 class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
-  late  TransitionHistoryProvider creditProvider;
+  late   TransitionHistoryProvider creditProvider;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                AppRoot.appRoutePush(context: context, page: const DownloadsPdfScreenState());
+                AppRoot.appRoutePush(context: context, page:  DownloadsPdfScreenState(name: widget.name.toString(),));
               },
               icon: const Icon(
                 Icons.picture_as_pdf_rounded,
@@ -91,7 +91,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   padding: const EdgeInsets.only(right: 50, ),
                   child: GestureDetector(
                     onLongPress: () {
-                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                      creditProvider.checkLocalAuthTransitionDelete(context, item.creditId);
                       Fluttertoast.showToast(msg: "OnLongPress");
                     },
                     child:
@@ -215,7 +215,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   child: GestureDetector(
                     onLongPress: () {
                       Fluttertoast.showToast(msg: "onLongPress");
-                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                      creditProvider.checkLocalAuthTransitionDelete(context, item.debitId);
                     },
                     child: Card(
                       color: Colors.white70,

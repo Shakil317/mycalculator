@@ -1,9 +1,10 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 import 'database_helper.dart';
+
 class ContactProvider with ChangeNotifier {
   late AnimationController searchAnimationController;
   late Animation<Offset> searchAnimation;
@@ -14,32 +15,33 @@ class ContactProvider with ChangeNotifier {
   TextEditingController numberController = TextEditingController();
   List<Contact> contacts = [];
   bool isLoading = true;
+
   void toggleSearch() {
-      isSearching = !isSearching;
-      if (isSearching) {
-        searchAnimationController.forward();
-      } else {
-        searchAnimationController.reverse();
-        searchController.clear();
-      }
-      notifyListeners();
+    isSearching = !isSearching;
+    if (isSearching) {
+      searchAnimationController.forward();
+    } else {
+      searchAnimationController.reverse();
+      searchController.clear();
+    }
+    notifyListeners();
   }
 
   void getContactPermission() async {
-    if (await Permission.contacts.isGranted) {
+    if (await Permission.contacts.request().isGranted) {
       fetchContact();
     } else {
-      await Permission.contacts.request();
+      Fluttertoast.showToast(msg: 'Contacts permission denied');
     }
     notifyListeners();
   }
 
   void fetchContact() async {
-    var contactNumbers = await ContactsService.getContacts();
-    contacts = contactNumbers.where((contact) {
-      var number = contact.phones ?? [];
-      return number.isNotEmpty &&
-          number.any((phone) => _isValidPhoneNumber(phone.value));
+    isLoading = true;
+    contacts = await FlutterContacts.getContacts(withProperties: true,withPhoto: true);
+    contacts = contacts.where((contact) {
+      return contact.phones.isNotEmpty &&
+          contact.phones.any((phone) => _isValidPhoneNumber(phone.number));
     }).toList();
     isLoading = false;
     notifyListeners();
@@ -47,18 +49,19 @@ class ContactProvider with ChangeNotifier {
 
   bool _isValidPhoneNumber(String? phoneNumber) {
     if (phoneNumber == null) return false;
-    var cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    return cleanedPhoneNumber.length == 10 &&
+    var cleaned = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    return cleaned.length == 10 &&
         !phoneNumber.contains('*') &&
         !phoneNumber.contains('#') &&
         !phoneNumber.contains('+');
   }
-  // void addToListDataBase() {
-  //   DatabaseHelper().getUser().then((value) {
-  //     newUsers.addAll(value);
-  //   });
-  //   notifyListeners();
-  // }
+
+  void addToListDataBase() {
+    DatabaseHelper().getUser().then((value) {
+      newUsers.addAll(value);
+      notifyListeners();
+    });
+  }
 
   void addToUserList(String contactName, String userContactNumber, String userId) async {
     var addUser = {
@@ -67,38 +70,35 @@ class ContactProvider with ChangeNotifier {
       "userId_321": userId.replaceAll('-', ' ').substring(0, 16),
     };
     await DatabaseHelper().insertUser(addUser);
-    //newUsers.add(addUser);
     showData();
-    notifyListeners();
   }
 
   void addContactByIndex(int index) async {
     if (index >= 0 && index < contacts.length) {
       var contact = contacts[index];
       String givenName = contact.displayName ?? 'Unknown Name';
-      var phoneNumbers = contact.phones ?? [];
       String userId = const Uuid().v4();
-      for (var phone in phoneNumbers) {
-        String phoneNumber = phone.value ?? '';
-        if (_isValidPhoneNumber(phoneNumber)) {
-          addToUserList(givenName,phoneNumber,userId);
+      for (var phone in contact.phones) {
+        if (_isValidPhoneNumber(phone.number)) {
+          addToUserList(givenName, phone.number, userId);
         }
       }
-      Fluttertoast.showToast(msg: 'Contact Added: ${contacts[index].displayName}');
+      Fluttertoast.showToast(msg: 'Contact Added: $givenName');
     }
   }
+
   void showData() async {
     newUsers.clear();
-    List<Map<String, dynamic>> userList = await DatabaseHelper().getUser();
-    //newUsers.addAll(userList);
+    newUsers = await DatabaseHelper().getUser();
     notifyListeners();
   }
+
   void searchContactsByName() {
     String searchQuery = searchController.text.toLowerCase();
     if (searchQuery.isNotEmpty) {
       contacts = contacts.where((contact) {
-        String contactName = contact.displayName?.toLowerCase() ?? '';
-        return contactName.contains(searchQuery);
+        String name = contact.displayName.toLowerCase() ?? '';
+        return name.contains(searchQuery);
       }).toList();
     } else {
       fetchContact();

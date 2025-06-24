@@ -108,9 +108,9 @@ class DatabaseHelper {
     var db = await insertDatabase();
     return  db.insert(myProfileTable, myProfile);
   }
-  Future<int> updateMyProfile(Map<String, dynamic> myProfile,int myProfileId)async{
+  Future<int> updateMyProfile(Map<String, dynamic> myProfile, String profileId) async {
     var db = await insertDatabase();
-    return   db.update(myProfileTable, myProfile,where: "profileId=?",whereArgs: [myProfileId]);
+    return db.update(myProfileTable, myProfile, where: "profileId = ?", whereArgs: [profileId]);
   }
   Future<int> deleteMyProfile(int myProfileDeleteId)async{
     var db = await insertDatabase();

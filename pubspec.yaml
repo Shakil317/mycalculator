@@ -50,13 +50,19 @@ dependencies:
   uuid: ^4.5.1
   path: ^1.9.0
   fluttertoast: ^8.2.12
-  contacts_service: ^0.6.3
+#  contacts_service: ^0.6.3
   permission_handler: ^11.3.1
   intl: ^0.18.0
   local_auth: ^2.3.0
   insta_image_viewer: ^1.0.4
   photo_viewer: ^0.0.3
   url_launcher: ^6.3.1
+  share_plus: ^11.0.0
+  printing: ^5.14.2
+  pdf: ^3.11.3
+  flutter_pdfview: ^1.4.0+1
+  open_file: ^3.5.10
+  flutter_contacts: ^1.1.9+2
 
 
 

@@ -9,7 +9,7 @@ import '../Utils/app_them.dart';
 import '../ViewModels/user_provider.dart';
 
 class UserContact extends StatefulWidget {
-    UserContact({super.key,});
+    const UserContact({super.key,});
 
   @override
   State<UserContact> createState() => _UserContactState();
@@ -39,12 +39,6 @@ class _UserContactState extends State<UserContact>
     contactProvider.searchController.addListener(() {
       contactProvider.searchContactsByName();
     });
-  }
-
-  @override
-  void dispose() {
-    searchAnimationController.dispose();
-    super.dispose();
   }
 
   @override
@@ -115,29 +109,28 @@ class _UserContactState extends State<UserContact>
                 ),
               ),
               child: ListView.builder(
-
                 itemCount: provider.contacts.length,
                 itemBuilder: (context, index) {
                   var contact = provider.contacts[index];
                   var contactAvatar =
-                      contact.avatar != null && contact.avatar!.isNotEmpty
-                          ? MemoryImage(contact.avatar!)
+                      contact.photo != null && contact.photo!.isNotEmpty
+                          ? MemoryImage(contact.photo!)
                           : null;
                   String phoneNumber =
-                      provider.contacts[index].phones!.isNotEmpty
-                          ? provider.contacts[index].phones?.first.value ??
+                      provider.contacts[index].phones.isNotEmpty
+                          ? provider.contacts[index].phones.first.number ??
                               'No phone number'
                           : 'No phone number';
                   return ListTile(
                     onTap:() {
-                    // AppDialogBox.navigatePage(context, UserScreens(name: provider.contacts[index].displayName.toString(),result: provider.contacts[index].phones.toString(),));
+                     //AppDialogBox.navigatePage(context, UserScreens(name: provider.contacts[index].displayName.toString(),result: provider.contacts[index].phones.toString(),));
                     } ,
                     title: Text(
-                      "${provider.contacts[index].displayName}",
+                       provider.contacts[index].displayName,
                       style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     subtitle: Text(
-                      phoneNumber,
+                       phoneNumber,
                       style:
                           const TextStyle(color: Colors.white60, fontSize: 15),
                     ),
@@ -148,8 +141,8 @@ class _UserContactState extends State<UserContact>
                       child: contactAvatar == null
                           ? Center(
                               child: Text(
-                                  contact.displayName!.isNotEmpty
-                                      ? contact.displayName![0]
+                                  contact.displayName.isNotEmpty
+                                      ? contact.displayName[0]
                                       : "?",
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 20)),
@@ -333,19 +326,19 @@ void _showAppDialog() {
                           if (name.isNotEmpty && number.isNotEmpty) {
                             String enteredName = userProvider.nameController.text.trim();
                             String enteredPhoneNumber = userProvider.numberController.text.trim();
-                            bool isPhoneNumberExist = provider.contacts.any((contact) {
-                              return contact.phones!.any((phone) => phone.value == enteredPhoneNumber);
-                            });
-                            bool isNameExist = provider.contacts.any((contact) {
-                              return contact.givenName == enteredName;
-                            });
-                            if (isPhoneNumberExist || isNameExist) {
-                              Fluttertoast.showToast(msg: "This phone number or name already exists in this contact list.");
-                            } else {
-                              userProvider.insertNewUser(context);
-                              AppRough.navigatePage(context, const UserScreens());
-                              Fluttertoast.showToast(msg: "Add New User Success.");
-                            }
+                            // bool isPhoneNumberExist = provider.contacts.any((contact) {
+                            //   return contact.phones!.any((phone) => phone.value == enteredPhoneNumber);
+                            // });
+                            // bool isNameExist = provider.contacts.any((contact) {
+                            //   return contact.givenName == enteredName;
+                            // });
+                            // if (isPhoneNumberExist || isNameExist) {
+                            //   Fluttertoast.showToast(msg: "This phone number or name already exists in this contact list.");
+                            // } else {
+                            //   userProvider.insertNewUser(context);
+                            //   AppRough.navigatePage(context, const UserScreens());
+                            //   Fluttertoast.showToast(msg: "Add New User Success.");
+                            // }
                           } else {
                             Fluttertoast.showToast(msg: "Please fill in all fields.");
                           }
