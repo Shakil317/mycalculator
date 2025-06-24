@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:mycalculator/app_rough.dart';
+import 'package:mycalculator/app_dialog.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
 import '../Utils/app_them.dart';
@@ -31,7 +31,7 @@ class _AdvancedCalculateScreenState extends State<AdvancedCalculateScreen> {
         options:const AuthenticationOptions(biometricOnly: true),
       );
       if(result){
-      AppRough.navigatePage(context, UserScreens());
+      AppDialog.navigatePage(context, UserScreens());
       }else{
         Fluttertoast.showToast(msg: "Permission Denied");
       }

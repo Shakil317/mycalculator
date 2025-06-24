@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
-import 'package:mycalculator/app_rough.dart';
+import 'package:mycalculator/app_dialog.dart';
 import 'package:mycalculator/calculator_screens/calculator_screen.dart';
 import 'package:mycalculator/screens/downloas_pdf_screen.dart';
 import 'package:mycalculator/screens/tamplete_screen.dart';
@@ -22,7 +22,7 @@ class TransitionHistoryScreen extends StatefulWidget {
 }
 
 class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
-  late  TransitionHistoryProvider creditProvider;
+  late   TransitionHistoryProvider creditProvider;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                AppRoot.appRoutePush(context: context, page: const DownloadsPdfScreenState());
+                AppRoot.appRoutePush(context: context, page:  DownloadsPdfScreenState(name: widget.name.toString(),));
               },
               icon: const Icon(
                 Icons.picture_as_pdf_rounded,
@@ -91,7 +91,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   padding: const EdgeInsets.only(right: 50, ),
                   child: GestureDetector(
                     onLongPress: () {
-                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                      creditProvider.checkLocalAuthTransitionDelete(context, item.creditId);
                       Fluttertoast.showToast(msg: "OnLongPress");
                     },
                     child:
@@ -118,7 +118,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding:  EdgeInsets.only(right: 10),
+                                    padding:  const EdgeInsets.only(right: 10),
                                     child: Text(
                                       "ReceiveMoney",
                                       style: TextStyle(
@@ -154,7 +154,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             Row(
                               children: [
                                 Padding(
-                                  padding:  EdgeInsets.only(left: 0, top: 0, right: 10),
+                                  padding:  const EdgeInsets.only(left: 0, top: 0, right: 10),
                                   child: Text(
                                     "Date:${item.currentDate}",
                                     style: TextStyle(
@@ -171,7 +171,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 0, right: 10),
                                     child: Text(
-                                      "${item.remarkItem}" ?? "",
+                                      "${item.remarkItem}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 16,
@@ -215,7 +215,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   child: GestureDetector(
                     onLongPress: () {
                       Fluttertoast.showToast(msg: "onLongPress");
-                      creditProvider.checkLocalAuthDeleteTransition(context, index);
+                      creditProvider.checkLocalAuthTransitionDelete(context, item.debitId);
                     },
                     child: Card(
                       color: Colors.white70,
@@ -268,7 +268,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             Row(
                               children: [
                                 Padding(
-                                  padding:  EdgeInsets.only(left: 0, top: 0, right: 10),
+                                  padding:  const EdgeInsets.only(left: 0, top: 0, right: 10),
                                   child: Text(
                                     "Date: ${item.currentDate}",
                                     style: TextStyle(
@@ -283,7 +283,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               children: [
                                 Expanded(  // Wrap Text widget inside Expanded to prevent overflow
                                   child: Padding(
-                                    padding:  EdgeInsets.only(top: 0, right: 10),
+                                    padding:  const EdgeInsets.only(top: 0, right: 10),
                                     child: Text(
                                       "${item.remarkItem}",
                                       style: TextStyle(
@@ -297,7 +297,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding:  EdgeInsets.only(left: 10, top: 0),
+                                  padding:  const EdgeInsets.only(left: 10, top: 0),
                                   child: Text(
                                     "Time : ${item.currentTime}",
                                     style: TextStyle(
@@ -498,7 +498,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                         const SizedBox(width: 5),
                         IconButton(
                           onPressed: () {
-                            AppRough.navigatePage(context, CalculateScreen());
+                            AppDialog.navigatePage(context, const CalculateScreen());
                           },
                           icon: const Icon(
                             Icons.calculate,
@@ -601,7 +601,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                         const SizedBox(width: 5),
                         IconButton(
                           onPressed: () {
-                            AppRough.navigatePage(context, const AdminTemplateListScreen());
+                            AppDialog.navigatePage(context, const AdminTemplateListScreen());
                           },
                           icon: const Icon(
                             Icons.shopping_bag_sharp,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +23,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
           scrollDirection: Axis.horizontal,
           children: [
             Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
@@ -80,11 +81,11 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                             color: Colors.green,
                             size: 18,
                           ),
-                          SizedBox(width: 5),
-                          Text(DateFormat('dd-MM-yyyy').format(DateTime.now(),),style: TextStyle(fontSize: 12),),
+                          const SizedBox(width: 5),
+                          Text(DateFormat('dd-MM-yyyy').format(DateTime.now(),),style: const TextStyle(fontSize: 12),),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Divider(
@@ -128,7 +129,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           itemBuilder: (context, index) => Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 5, top: 10),
+                                padding: const EdgeInsets.only(left: 5, top: 10),
                                 child: Text("Product Item ${index + 1}"),
                               ),
                               const Padding(
@@ -165,7 +166,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, top: 5),
                             child: InstaImageViewer(
-                              child: Container(
+                              child: SizedBox(
                                 height: 40,
                                 width: 40,
                                 child: Image.asset(
@@ -192,7 +193,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
@@ -261,7 +262,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Divider(
@@ -306,10 +307,10 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           itemBuilder: (context, index) => Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 5, top: 10),
+                                padding: const EdgeInsets.only(left: 5, top: 10),
                                 child: Text("13/12/2024 Due ${index + 1}"),
                               ),
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 140, top: 10),
                                 child: Text("1500/"),
                               ),
@@ -317,7 +318,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           ),
                         ),
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Divider(
                           color: Colors.green,
@@ -326,7 +327,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           endIndent: 0,
                         ),
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 10, top: 5),
@@ -343,7 +344,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, top: 5),
                             child: InstaImageViewer(
-                              child: Container(
+                              child: SizedBox(
                                 height: 40,
                                 width: 40,
                                 child: Image.asset(
@@ -353,10 +354,10 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 170, top: 5),
+                            padding: const EdgeInsets.only(left: 170, top: 5),
                             child: IconButton(
                                 onPressed: () {},
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.send,
                                   color: Colors.green,
                                   size: 30,
@@ -429,9 +430,9 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                             color: Colors.green,
                             size: 18,
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           // DateFormat('dd-MM-yyyy').format(DateTime.now()
-                          Text(DateFormat('dd-MM-yyyy').format(DateTime.now(),),style: TextStyle(fontSize: 12),
+                          Text(DateFormat('dd-MM-yyyy').format(DateTime.now(),),style: const TextStyle(fontSize: 12),
                           ),
 
                         ],
@@ -480,7 +481,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           itemBuilder: (context, index) => Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 5, top: 10),
+                                padding: const EdgeInsets.only(left: 5, top: 10),
                                 child: Text("Product Item ${index + 1}"),
                               ),
                               const Padding(
@@ -517,7 +518,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, top: 5),
                             child: InstaImageViewer(
-                              child: Container(
+                              child: SizedBox(
                                 height: 40,
                                 width: 40,
                                 child: Image.asset(
@@ -527,10 +528,10 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 170, top: 5),
+                            padding: const EdgeInsets.only(left: 170, top: 5),
                             child: IconButton(onPressed: () {
 
-                            }, icon: Icon(Icons.send,color: Colors.green,size: 30,)),
+                            }, icon: const Icon(Icons.send,color: Colors.green,size: 30,)),
                           ),
                         ],
                       ),
@@ -540,7 +541,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
               ),
             ),
             Padding(
-              padding:  EdgeInsets.all(10.0),
+              padding:  const EdgeInsets.all(10.0),
               child: Center(
                 child: Container(
                   height: 500,
@@ -647,7 +648,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           itemBuilder: (context, index) => Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 5, top: 10),
+                                padding: const EdgeInsets.only(left: 5, top: 10),
                                 child: Text("Product Item ${index + 1}"),
                               ),
                               const Padding(
@@ -684,7 +685,7 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, top: 5),
                             child: InstaImageViewer(
-                              child: Container(
+                              child: SizedBox(
                                 height: 40,
                                 width: 40,
                                 child: Image.asset(
@@ -694,10 +695,10 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 170, top: 5),
+                            padding: const EdgeInsets.only(left: 170, top: 5),
                             child: IconButton(onPressed: () {
 
-                            }, icon: Icon(Icons.send,color: Colors.green,size: 30,)),
+                            }, icon: const Icon(Icons.send,color: Colors.green,size: 30,)),
                           ),
                         ],
                       ),
@@ -717,7 +718,9 @@ class _AdminTemplateListScreenState extends State<AdminTemplateListScreen> {
         initialDate: DateTime.now(),
         lastDate: DateTime.now());
     if(datePicker != null){
-      print("date selected ${datePicker.day}");
+      if (kDebugMode) {
+        print("date selected ${datePicker.day}");
+      }
     }
   }
 }

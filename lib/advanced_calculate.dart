@@ -59,11 +59,21 @@ class MyAmount {
   void userInterests({required final userAmount,required var rate,required var duration}) {
     var totalInterests = (userAmount * duration) * rate / 100;
     var finalPayment = userAmount + totalInterests;
-    print("Customer Amount :  $userAmount/-");
-    print("Customer Interests duration Time  Monthly  :  $duration Month");
-    print("Customer Rate Per Month :  $rate%");
-    print("Interests only Customer : $totalInterests/-");
-    print("final Amount with Interests : $finalPayment/-");
+    if (kDebugMode) {
+      print("Customer Amount :  $userAmount/-");
+    }
+    if (kDebugMode) {
+      print("Customer Interests duration Time  Monthly  :  $duration Month");
+    }
+    if (kDebugMode) {
+      print("Customer Rate Per Month :  $rate%");
+    }
+    if (kDebugMode) {
+      print("Interests only Customer : $totalInterests/-");
+    }
+    if (kDebugMode) {
+      print("final Amount with Interests : $finalPayment/-");
+    }
     var recycleFinal = finalPayment;
     for(var intValue = recycleFinal; intValue<= recycleFinal; intValue++){
       if(finalPayment != null){

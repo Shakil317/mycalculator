@@ -45,3 +45,50 @@
   // }
 
 //}
+
+import 'package:flutter/foundation.dart';
+
+void userCompoundInterests(
+    {required var amount, required var rate, required var time}) {
+  var onlyInterest = (amount * rate * time) / 100;
+
+
+  if (kDebugMode) {
+    print("only Interest : $onlyInterest");
+  }
+
+
+  var interestWithAmount = amount + onlyInterest;
+
+  print("Total interest With Amount: $interestWithAmount");
+
+
+  var compoundInterest = interestWithAmount * 10 / 100;
+
+  print("Additional 10% of Compound Interest: $compoundInterest");
+
+
+  var amountWithCompoundInterest = compoundInterest + interestWithAmount;
+
+  print(amountWithCompoundInterest);
+
+}
+void userCompoundsInterests(
+    {required var amount, required var rate, required var time}) {
+  var timeInYears = time / 12;
+  var onlyInterest = (amount * rate * timeInYears) / 100;
+
+  print("Only Interest: $onlyInterest");
+
+  var interestWithAmount = amount + onlyInterest;
+
+  print("Total Interest With Amount: $interestWithAmount");
+
+  var compoundInterest = interestWithAmount * 10 / 100;
+
+  print("Additional 10% of Compound Interest: $compoundInterest");
+
+  var amountWithCompoundInterest = compoundInterest + interestWithAmount;
+
+  print("Amount with Compound Interest: $amountWithCompoundInterest");
+}

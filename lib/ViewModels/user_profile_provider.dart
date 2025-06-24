@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,11 +5,12 @@ import 'package:mycalculator/models/profil_model.dart';
 import 'package:uuid/uuid.dart';
 import 'database_helper.dart';
 class UserProfileProvider with ChangeNotifier {
+
   List<MyProfileModel> userProfile = [];
   TextEditingController shopNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController bankInfoController = TextEditingController();
-  bool get isProfileExist => userProfile.isNotEmpty;
+  bool get isProfileExist => userProfile.isEmpty;
   XFile? qrImage;
   XFile? prImage;
   XFile? stampImage;
@@ -56,26 +55,26 @@ class UserProfileProvider with ChangeNotifier {
       var updateProfile = {
         "profileId": profileId,
         "shopName": shopNameController.text.trim().isEmpty
-            ? userProfile[0].shopName
+            ? userProfile[2].shopName
             : shopNameController.text.trim(),
         "phone": phoneController.text.trim().isEmpty
-            ? userProfile[0].phone
+            ? userProfile[2].phone
             : phoneController.text.trim(),
         "bankInfo": bankInfoController.text.trim().isEmpty
-            ? userProfile[0].bankInfo
+            ? userProfile[2].bankInfo
             : bankInfoController.text.trim(),
         "prImage": prImage?.path.toString().isEmpty ?? true
-            ? userProfile[0].profileImage
+            ? userProfile[2].profileImage
             : prImage!.path.toString(),
         "uploadStamp": stampImage?.path.toString().isEmpty ?? true
-            ? userProfile[0].uploadStamp
+            ? userProfile[2].uploadStamp
             : stampImage!.path.toString(),
         "qrImage": qrImage?.path.toString().isEmpty ?? true
-            ? userProfile[0].qrImage
+            ? userProfile[2].qrImage
             : qrImage!.path.toString(),
       };
 
-      await DatabaseHelper().updateMyProfile(updateProfile, int.parse(profileId));
+      await DatabaseHelper().updateMyProfile(updateProfile, int.parse(profileId).toString());
 
       Fluttertoast.showToast(msg: 'Profile Updated Successfully!');
       showProfileData();
@@ -89,23 +88,17 @@ class UserProfileProvider with ChangeNotifier {
     final shopName = shopNameController.text.trim();
     final phone = phoneController.text.trim();
     final bankInfo = bankInfoController.text.trim();
-
-    if (shopName.isEmpty || phone.isEmpty || bankInfo.isEmpty) {
-      Fluttertoast.showToast(msg: "Please fill all required fields.");
-      return;
-    }
-
     final profileMap = {
       "shopName": shopName,
       "phone": phone,
       "bankInfo": bankInfo,
       "qrImage": qrImage?.path ?? '',
-      "profileImage": prImage?.path ?? '',
+      "prImage": prImage?.path ?? '',
       "uploadStamp": stampImage?.path ?? '',
     };
+    final existingProfiles = await DatabaseHelper().getMyProfile();
 
-    if (userProfile.isEmpty) {
-      // CREATE
+    if (existingProfiles.isEmpty) {
       String profileUuID = const Uuid().v4();
       String profileId = profileUuID.replaceAll('-', '').substring(0, 6);
       profileMap['profileId'] = profileId;
@@ -113,24 +106,23 @@ class UserProfileProvider with ChangeNotifier {
       await DatabaseHelper().insertMyProfile(profileMap);
       Fluttertoast.showToast(msg: 'Profile Created Successfully!');
     } else {
-      // UPDATE
-      final profileId = userProfile[0].id;
-      await DatabaseHelper().updateMyProfile(profileMap, profileId!);
+      final profileId = existingProfiles[0]['profileId'];
+      await DatabaseHelper().updateMyProfile(profileMap, profileId);
       Fluttertoast.showToast(msg: 'Profile Updated Successfully!');
     }
 
-     showProfileData();
+    await showProfileData();
     clearController();
     notifyListeners();
   }
 
 
-
-  void showProfileData() async {
+  Future<void> showProfileData() async {
     List<Map<String, dynamic>> profileList = await DatabaseHelper().getMyProfile();
     userProfile = profileList.map((profile) => MyProfileModel.fromJson(profile)).toList();
     notifyListeners();
   }
+
   void pickNewImage(String imageType) async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {

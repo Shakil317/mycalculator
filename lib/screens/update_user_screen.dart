@@ -1,21 +1,41 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../ViewModels/contact_provider.dart';
 import '../ViewModels/user_provider.dart';
+import '../models/users_model.dart';
 
 class UpdateUserScreen extends StatefulWidget {
-  const UpdateUserScreen({super.key});
+  final UsersModel user;
+  const UpdateUserScreen({super.key, required this.user});
 
   @override
   State<UpdateUserScreen> createState() => _UpdateUserScreenState();
 }
 
 class _UpdateUserScreenState extends State<UpdateUserScreen> {
+ late final ContactProvider  contactProvider;
+  @override
+  void initState() {
+    super.initState();
+
+  }
+  void showUsers(){
+    final provider = Provider.of<UserProvider>(context, listen: false);
+    provider.nameController.text = widget.user.name ?? '';
+    provider.numberController.text = widget.user.number ?? '';
+    if (widget.user.image != null) {
+      provider.image = XFile(widget.user.image!);
+    }
+  }
+
   @override
   Widget build(
     BuildContext context,
   ) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
+     contactProvider = Provider.of<ContactProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -28,7 +48,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
                 onPressed: () {
-                  userProvider.updateUsers(context, userProvider.users);
+                  userProvider.checkLocalAuthUpdate(context, widget.user,);
                 },
                 icon: const Icon(
                   Icons.done,
@@ -64,11 +84,10 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: userProvider.image == null
-                      ? Image.asset(
-                          "assets/images/shakilansari.jpg",
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(File(userProvider.image!.path).path),
+                      ? (widget.user.image == null
+                      ? Image.asset("assets/images/shakilansari.jpg", fit: BoxFit.cover)
+                      : Image.file(File(widget.user.image!), fit: BoxFit.cover))
+                      : Image.file(File(userProvider.image!.path), fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -237,7 +256,10 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                           style: const ButtonStyle(
                               backgroundColor:
                                   WidgetStatePropertyAll(Colors.orange)),
-                          onPressed: () {},
+                          onPressed: () {
+                            //userProvider.updateUsers(context, widget.user);
+                            userProvider.checkLocalAuthUpdate(context, widget.user);
+                          },
                           child: const Text(
                             "Update User",
                             style: TextStyle(

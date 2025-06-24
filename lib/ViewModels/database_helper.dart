@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -96,7 +97,9 @@ class DatabaseHelper {
   //db.query(transactionsTable)
   Future<List<Map<String,dynamic>>> getTransition({required var userId})async{
 
-    print("check userid :: $userId");
+    if (kDebugMode) {
+      print("check userid :: $userId");
+    }
     var db = await insertDatabase();
     return   db.query(transactionsTable,
       where: 'usersId = ?',
@@ -108,9 +111,9 @@ class DatabaseHelper {
     var db = await insertDatabase();
     return  db.insert(myProfileTable, myProfile);
   }
-  Future<int> updateMyProfile(Map<String, dynamic> myProfile,int myProfileId)async{
+  Future<int> updateMyProfile(Map<String, dynamic> myProfile, String profileId) async {
     var db = await insertDatabase();
-    return   db.update(myProfileTable, myProfile,where: "profileId=?",whereArgs: [myProfileId]);
+    return db.update(myProfileTable, myProfile, where: "profileId = ?", whereArgs: [profileId]);
   }
   Future<int> deleteMyProfile(int myProfileDeleteId)async{
     var db = await insertDatabase();
