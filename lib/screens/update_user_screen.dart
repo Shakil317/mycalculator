@@ -15,10 +15,15 @@ class UpdateUserScreen extends StatefulWidget {
 }
 
 class _UpdateUserScreenState extends State<UpdateUserScreen> {
- late final ContactProvider  contactProvider;
+ late   ContactProvider  contactProvider;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      contactProvider = Provider.of<ContactProvider>(context, listen: false);
+      contactProvider.fetchContact();
+      showUsers();
+    });
 
   }
   void showUsers(){
@@ -35,7 +40,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
     BuildContext context,
   ) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-     contactProvider = Provider.of<ContactProvider>(context);
+     contactProvider = Provider.of<ContactProvider>(context,listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -128,9 +133,10 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
+                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     child: TextField(
+                      controller: contactProvider.givenController,
                       decoration: InputDecoration(
                         labelText: "Given Name",
                         labelStyle: TextStyle(
@@ -188,10 +194,12 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     child: TextField(
-                      decoration: InputDecoration(
+                      controller:contactProvider.emailController ,
+                      readOnly: true,
+                      decoration: const InputDecoration(
                         labelText: "Gmail Address",
                         labelStyle: TextStyle(
                             fontSize: 16,
