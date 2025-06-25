@@ -13,12 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../Utils/app_them.dart';
 import '../ViewModels/transition_history_provider.dart';
-
 class UserScreens extends StatefulWidget {
+  final int? id;
   final String? name;
   final String? userData;
 
-  const UserScreens({super.key, this.name, this.userData});
+  const UserScreens({super.key,this.id, this.name, this.userData});
 
   @override
   State<UserScreens> createState() => _UserScreensState();
@@ -27,6 +27,8 @@ class UserScreens extends StatefulWidget {
 class _UserScreensState extends State<UserScreens> {
   late UserProvider userProvider;
   late UserProfileProvider userProfileProvider;
+  late TransitionHistoryProvider creditProvider;
+
 
   @override
   void initState() {
@@ -36,7 +38,15 @@ class _UserScreensState extends State<UserScreens> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProfileProvider>(context, listen: false)
           .showProfileData();
+
+      creditProvider =
+          Provider.of<TransitionHistoryProvider>(context, listen: false);
+      creditProvider.usersId = widget.id!;
+      // creditProvider.transitionList.clear();
+      creditProvider.showAmountTransition();
     });
+
+
   }
 
   @override
@@ -49,227 +59,236 @@ class _UserScreensState extends State<UserScreens> {
     );
     return Scaffold(
       backgroundColor: AppThem.appBgColor,
-      drawer: Drawer(
-        backgroundColor: const Color(0xff010c17),
+      drawer:
+      Drawer(
+        backgroundColor:  const Color(0xff010c17),
         width: MediaQuery.of(context).size.width * 0.7,
         child: Container(
           color: const Color(0xFF1d2630),
-          height: MediaQuery.of(context).size.height / 2,
+          height: MediaQuery.of(context).size.height*0.5,
           width: MediaQuery.of(context).size.width * 0.3,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(top: 50, left: 0),
-                      height: 100,
-                      width: 200,
-                      child: InkWell(
-                        onTap: () {
-                          // Your tap logic here
-                        },
-                        child: Consumer<UserProfileProvider>(
-                          builder: (context, profileData, child) {
-                            var profile = profileData.userProfile;
-                            return ListView.builder(
-                              itemCount: profile.length,
-                              itemBuilder: (context, index) {
-                                final item = profile[index];
-                                final hasImage = item.profileImage != null ||
-                                    item.profileImage!.isNotEmpty;
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 16.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 30,
-                                        backgroundColor: Colors.green,
-                                        foregroundImage: hasImage
-                                            ? (item.profileImage!
-                                            .startsWith('assets/')
-                                            ? AssetImage(item.profileImage!)
-                                            : FileImage(
-                                            File(item.profileImage!)))
-                                            : const AssetImage(
-                                            'assets/images/main_home_image.jpeg'),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets.only(top: 12.0),
-                                          child: Text(
-                                            item.shopName ?? "ABC Store",
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white),
-                                            overflow: TextOverflow.visible,
-                                            softWrap: false,
-                                            maxLines: 2,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                        margin: const EdgeInsets.only(top: 50, left: 0),
+                        height: 100,
+                        width: 200,
+                        child: InkWell(
+                          onTap: () {
+            
+                          },
+                          child: Consumer<UserProfileProvider>(
+                            builder: (context, profileData, child) {
+                              var profile = profileData.userProfile;
+                              return ListView.builder(
+                                itemCount: profile.length,
+                                itemBuilder: (context, index) {
+                                  final item = profile[index];
+                                  final hasImage = item.profileImage != null ||
+                                      item.profileImage!.isNotEmpty;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 16.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap:() async{
+                                            await AppDialog.myProfileDialog(context);
+                                            },
+                                          child: CircleAvatar(
+                                            radius: 30,
+                                            backgroundColor: Colors.green,
+                                            foregroundImage: hasImage
+                                                ? (item.profileImage!
+                                                        .startsWith('assets/')
+                                                    ? AssetImage(item.profileImage!)
+                                                    : FileImage(
+                                                        File(item.profileImage!)))
+                                                : const AssetImage(
+                                                    'assets/images/main_home_image.jpeg'),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      )),
-                  const Positioned(
-                      top: 120,
-                      left: 62,
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 12.0),
+                                            child: Text(
+                                              item.shopName ?? "ABC Store",
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                              overflow: TextOverflow.visible,
+                                              softWrap: false,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        )),
+                    const Positioned(
+                        top: 120,
+                        left: 62,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundImage:
+                              AssetImage("assets/images/Calculator_512.png"),
+                        ))
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          await AppDialog.myProfileDialog(context);
+                        },
+                        child: const Text(
+                          "Add New Profile",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Share Your Cards",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.tablet_mac,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          AppDialog.navigatePage(
+                              context, const AdminTemplateListScreen());
+                        },
+                        child: const Text(
+                          "Use New Template",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.play_circle,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Remove Adds",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.insert_invitation,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Share Your Card",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.settings,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Settings",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
                       child: CircleAvatar(
                         radius: 10,
                         backgroundImage:
-                        AssetImage("assets/images/Calculator_512.png"),
-                      ))
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white70,
-                      size: 20,
+                            AssetImage("assets/images/Calculator_512.png"),
+                      ),
                     ),
-                  ),
-                  TextButton(
-                      onPressed: ()async {
-                        await AppDialog.myProfileDialog(context);
-                      },
-                      child: const Text(
-                        "Add New Profile",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Share Your Cards",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.tablet_mac,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        AppDialog.navigatePage(
-                            context, const AdminTemplateListScreen());
-                      },
-                      child: const Text(
-                        "Use New Template",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.play_circle,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Remove Adds",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.insert_invitation,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Share Your Card",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.settings,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Settings",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: CircleAvatar(
-                      radius: 10,
-                      backgroundImage:
-                      AssetImage("assets/images/Calculator_512.png"),
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Share App",
-                        style: TextStyle(fontSize: 18, color: Colors.white70),
-                      )),
-                ],
-              )
-            ],
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Share App",
+                          style: TextStyle(fontSize: 18, color: Colors.white70),
+                        )),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -281,18 +300,7 @@ class _UserScreensState extends State<UserScreens> {
                 fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xff010c17),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: Text(
-              "58680 र",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.redAccent),
-            ),
-          )
-        ],
+
       ),
       body: Consumer<UserProvider>(
         builder: (context, value, child) {
@@ -300,7 +308,7 @@ class _UserScreensState extends State<UserScreens> {
             children: [
               Padding(
                 padding:
-                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: TextField(
                   controller: value.searchController,
                   onChanged: (query) {
@@ -418,7 +426,7 @@ class _UserScreensState extends State<UserScreens> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                      left: 30,
+                                      left: 25,
                                     ),
                                     child: Text(
                                       DateFormat('dd MMM -yy')
@@ -429,9 +437,8 @@ class _UserScreensState extends State<UserScreens> {
                                   ),
                                   Padding(
                                     padding:
-                                    const EdgeInsets.only(left: 35, top: 5),
-                                    child: Text(
-                                      "₹ ${transitionProvider.yourCollectionData}/",
+                                        const EdgeInsets.only(left: 30, top: 5),
+                                    child: Text("₹${transitionProvider.yourCollectionData}/",
                                       style: TextStyle(
                                           color: Colors.redAccent.shade100,
                                           fontSize: 16),
@@ -445,25 +452,25 @@ class _UserScreensState extends State<UserScreens> {
                             child: InstaImageViewer(
                               child: CircleAvatar(
                                 radius: 25,
-                                backgroundColor: Colors.green,
+                                backgroundColor: AppThem.appPrimaryColor,
                                 backgroundImage: (user.image != null &&
-                                    user.image!.isNotEmpty)
+                                        user.image!.isNotEmpty)
                                     ? FileImage(File(user.image!))
                                     : null,
                                 child:
-                                (user.image == null || user.image!.isEmpty)
-                                    ? Text(
-                                  (user.name != null &&
-                                      user.name!.isNotEmpty)
-                                      ? user.name![0].toUpperCase()
-                                      : '',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                    : null,
+                                    (user.image == null || user.image!.isEmpty)
+                                        ? Text(
+                                            (user.name != null &&
+                                                    user.name!.isNotEmpty)
+                                                ? user.name![0].toUpperCase()
+                                                : '',
+                                            style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : null,
                               ),
                             ),
                           ),
@@ -474,10 +481,11 @@ class _UserScreensState extends State<UserScreens> {
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.call,
-                                      color: Colors.green),
-                                  title: const Text("Calling",
+                                      color: AppThem.appBgColor),
+                                  title: Text("Calling",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.blue)),
+                                          fontSize: 14,
+                                          color: AppThem.appPrimaryColor)),
                                   onTap: () {
                                     launchUrlString(
                                         "tel://${user.number.toString()}");
@@ -488,12 +496,14 @@ class _UserScreensState extends State<UserScreens> {
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.message,
-                                      color: Colors.green),
-                                  title: const Text("Message",
+                                      color: AppThem.appBgColor),
+                                  title: Text("Message",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.blue)),
+                                          fontSize: 14,
+                                          color: AppThem.appPrimaryColor)),
                                   onTap: () async {
-                                    final sms = Uri.parse('sms:${user.number.toString()}');
+                                    final sms = Uri.parse(
+                                        'sms:${user.number.toString()}');
                                     if (await canLaunchUrl(sms)) {
                                       launchUrl(sms);
                                     } else {
@@ -506,21 +516,22 @@ class _UserScreensState extends State<UserScreens> {
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.edit_note,
-                                      color: Colors.green),
-                                  title: const Text("Update User",
+                                      color: AppThem.appBgColor),
+                                  title: Text("Update User",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.red)),
+                                          fontSize: 14,
+                                          color: AppThem.appPrimaryColor)),
                                   onTap: () {
                                     Navigator.pop(context);
                                     showDialog(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: const Text(
+                                          title: Text(
                                             "Update User",
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                color: Colors.pinkAccent),
+                                                color: AppThem.appPrimaryColor),
                                           ),
                                           content: Text(
                                             "Are you sure you want to Update User ${user.name}?",
@@ -547,7 +558,7 @@ class _UserScreensState extends State<UserScreens> {
                                                 child: Text('Yes',
                                                     style: TextStyle(
                                                       color:
-                                                      Colors.green.shade900,
+                                                          Colors.green.shade900,
                                                     ))),
                                           ],
                                         );
@@ -590,7 +601,7 @@ class _UserScreensState extends State<UserScreens> {
                 ),
               ],
             ),
-            backgroundColor: Colors.orangeAccent,
+            backgroundColor: AppThem.appPrimaryColor,
           ),
         ],
       ),

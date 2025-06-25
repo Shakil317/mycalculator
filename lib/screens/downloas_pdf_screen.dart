@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:mycalculator/Utils/app_them.dart';
+import 'package:mycalculator/app_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -91,14 +93,14 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
         width: MediaQuery.of(context).size.width,
         child: Center(
           child: Container(
-            color: Colors.pink.shade200,
+            color: AppThem.appBgColor,
             child: Column(
               children: [
                 const Padding(
                   padding: EdgeInsets.only(top: 5.0),
                   child: Text(
                     "Share Your Pdf:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white),
                   ),
                 ),
                 Row(
@@ -136,8 +138,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
           builder: (context, provider, child) {
             if (provider.userProfile.isEmpty) {
               return const Center(child: CircularProgressIndicator());
-            }
-
+          }
             if (provider.userProfile.isEmpty) {
               return const Center(child: Text("No profile data found"));
             }
@@ -152,12 +153,12 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                       Container(
                         width: MediaQuery.of(context).size.width * 1,
                         height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
+                        decoration:  const BoxDecoration(
+                          borderRadius:  BorderRadius.only(
                             topLeft: Radius.circular(10),
                             topRight: Radius.circular(10),
                           ),
-                          color: Colors.pink.shade200,
+                          color: AppThem.appBgColor,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10, top: 10),
@@ -183,17 +184,17 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                       profile.shopName ?? "ABC Store",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21),
+                                          fontSize: 21,color: Colors.white),
                                     ),
                                   ),
                                   Row(
                                     children: [
                                       const Icon(Icons.location_on,
                                           color: Colors.pink, size: 12),
-                                      Text(profile.bankInfo ?? "ABC Area"),
+                                      Text(profile.bankInfo ?? "ABC Area",style: TextStyle(color: Colors.white),),
                                       const Icon(Icons.phone,
                                           color: Colors.pink, size: 12),
-                                      Text(profile.phone ?? "6206731567"),
+                                      Text(profile.phone ?? "6206731567",style: TextStyle(color: Colors.white),),
                                     ],
                                   ),
                                 ],
@@ -205,7 +206,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Table(
-                          border: TableBorder.all(color: Colors.pink.shade200),
+                          border: TableBorder.all(color: AppThem.appBgColor),
                           defaultVerticalAlignment:
                               TableCellVerticalAlignment.middle,
                           columnWidths: const {
@@ -217,10 +218,10 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                             5: FixedColumnWidth(60),
                           },
                           children: [
-                            TableRow(
+                            const TableRow(
                               decoration:
-                                  BoxDecoration(color: Colors.pink.shade200),
-                              children: const [
+                                  BoxDecoration(color: AppThem.appBgColor),
+                              children: [
                                 Center(
                                     child: Text("No",
                                         style: TextStyle(
@@ -321,7 +322,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                       width: 80,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Colors.orangeAccent,
+                                            color:  Colors.orangeAccent,
                                             width: 1),
                                       ),
                                       child: profile.qrImage != null
@@ -335,7 +336,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                 ),
                                 const Text("Scan QR",
                                     style:
-                                        TextStyle(color: Colors.orangeAccent)),
+                                        TextStyle(color: AppThem.appBgColor)),
                               ],
                             ),
                             const SizedBox(width: 10),
@@ -369,15 +370,12 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                     ),
                                   ),
                                 ),
-                                const Text("My Stamp",
-                                    style:
-                                        TextStyle(color: Colors.orangeAccent)),
+                                const Text("My Stamp",),
                               ],
                             ),
                           ],
                         ),
                       ),
-
                       const Row(
                         children: [
                           Padding(
@@ -398,18 +396,18 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                           Text("UdaanBiz", style: TextStyle(fontSize: 12)),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width * 1,
                         height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10),
                           ),
-                          color: Colors.pink.shade200,
+                          color: AppThem.appBgColor,
                         ),
                       ),
                     ],

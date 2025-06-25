@@ -6,6 +6,7 @@ import 'package:mycalculator/ViewModels/user_profile_provider.dart';
 import 'package:mycalculator/screens/user_contact.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
+import 'Utils/app_them.dart';
 import 'ViewModels/contact_provider.dart';
 import 'ViewModels/database_helper.dart';
 import 'ViewModels/user_provider.dart';
@@ -47,13 +48,13 @@ class AppDialog {
                     color: Colors.white,
                     child: Column(
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 20, top: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, top: 20),
                           child: Text("Edit Your Profile",
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange)),
+                                  color: AppThem.appPrimaryColor)),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -61,14 +62,14 @@ class AppDialog {
                           child: TextField(
                             controller: value.shopNameController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
+                            style: const TextStyle(color:AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
                               labelText: "Enter Your Shop / Company / Name",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -78,14 +79,14 @@ class AppDialog {
                           child: TextField(
                             controller: value.phoneController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
+                            style: const TextStyle(color: AppThem.appBgColor),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
                               labelText: "Enter Your Phone or Email",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelStyle: TextStyle(color: AppThem.appPrimaryColor),
+                              prefixIcon: const Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -96,14 +97,14 @@ class AppDialog {
                             controller: value.bankInfoController,
                             keyboardType: TextInputType.name,
                             style:  const TextStyle(
-                                color: Colors.orange),
+                                color: AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
-                              labelText: "Enter Your Address/ Bank Info",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelText: "Enter Your Address/ Shop Info",
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -111,7 +112,7 @@ class AppDialog {
                           children: [
                             InkWell(
                               onTap: () {
-                                value.pickNewImage('qr');
+                                value.pickNewImage("profile");
                               },
                               child:
                               Padding(
@@ -119,21 +120,22 @@ class AppDialog {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(12.0),
                                       child: Container(
                                         height: 80,
                                         width: 80,
-                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
+                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1),color: Colors.green),
                                         child:
                                         Image(
-                                          image: value.qrImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
-                                              : FileImage(File(value.qrImage!.path)),
+                                          image: value.prImage == null
+                                              ? const AssetImage("assets/images/Profile_image.png")
+                                              : FileImage(File(value.prImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload QR",style: TextStyle(color: Colors.orangeAccent),)
+                                    Text("Upload Profile",style: TextStyle(color: AppThem.appPrimaryColor),)
+
                                   ],
                                 ),
                               ),
@@ -156,13 +158,13 @@ class AppDialog {
                                         decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
                                         child: Image(
                                           image: value.stampImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
+                                              ? const AssetImage("assets/images/shop_keeper_image.jpg")
                                               : FileImage(File(value.stampImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload Stamp",style: TextStyle(color: Colors.orangeAccent),)
+                                     Text("Upload Stamp",style: TextStyle(color:AppThem.appPrimaryColor),)
                                   ],
                                 ),
                               ),
@@ -170,7 +172,7 @@ class AppDialog {
                             const SizedBox(width: 10,),
                             InkWell(
                               onTap: () {
-                                value.pickNewImage("profile");
+                                value.pickNewImage('qr');
                               },
                               child:
                               Padding(
@@ -178,21 +180,21 @@ class AppDialog {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                       child: Container(
                                         height: 80,
                                         width: 80,
-                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1),color: Colors.green),
+                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
                                         child:
                                         Image(
-                                          image: value.prImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
-                                              : FileImage(File(value.prImage!.path)),
+                                          image: value.qrImage == null
+                                              ? const AssetImage("assets/images/dumi_scaner_image.jpg")
+                                              : FileImage(File(value.qrImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload Profile",style: TextStyle(color: Colors.orangeAccent),)
+                                    Text("Upload QR",style: TextStyle(color: AppThem.appPrimaryColor),)
                                   ],
                                 ),
                               ),
@@ -208,11 +210,20 @@ class AppDialog {
                             child: ElevatedButton(
                               style: const ButtonStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.orange)),
+                                  WidgetStatePropertyAll(AppThem.appBgColor)),
                               onPressed: () async {
-                                value.createOrUpdateProfile(context);
-                                profileProvider.clearController();
-                                Navigator.pop(context);
+                                var name = profileProvider.shopNameController.text.toString();
+                                var number = profileProvider.phoneController.text.toString();
+                                var shopInfo = profileProvider.bankInfoController.text.toString();
+                                var qrImage = profileProvider.qrImage.toString();
+                                var prImage = profileProvider.userProfile.toString();
+                                if(name.isNotEmpty && number.isNotEmpty && shopInfo.isNotEmpty && qrImage.isNotEmpty && prImage.isNotEmpty){
+                                  value.createOrUpdateProfile(context);
+                                  profileProvider.clearController();
+                                  Navigator.pop(context);
+                                }else{
+                                  Fluttertoast.showToast(msg: "please fill in all blanks");
+                                }
                               },
                               child:
                               Text(profileProvider.isProfileExist ? "Update" : "Save",
@@ -273,18 +284,18 @@ class AppDialog {
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
-                      side: const BorderSide(width: 3, color: Colors.orange),
+                      side: BorderSide(width: 3, color: AppThem.appPrimaryColor),
                     ),
                     color: Colors.white,
                     child: Column(
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 20, top: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 20),
                           child: Text("Add New User",
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange)),
+                                  color: AppThem.appPrimaryColor)),
                         ),
                         const SizedBox(height: 10),
                         InkWell(
@@ -295,8 +306,8 @@ class AppDialog {
                             radius: 40,
                             backgroundImage: usersData.image != null
                                 ?  FileImage(File(usersData.image!.path))
-                                :const AssetImage("assets/images/shakilansari.jpg") ,
-                            backgroundColor: Colors.orange,
+                                :const AssetImage("assets/images/Profile_image.png") ,
+                            backgroundColor: AppThem.appBgColor,
                           ),
                         ),
                         Padding(
@@ -305,14 +316,14 @@ class AppDialog {
                           child: TextField(
                             controller: usersData.nameController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
+                            style: const TextStyle(color: AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
-                              labelText: "Enter Your Name",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelText: "Enter Custemer Name",
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -321,23 +332,24 @@ class AppDialog {
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 10,
+                                top: 5
                               ),
                               child: SizedBox(
                                 width: 200,
-                                height: 60,
+                                height: 70,
                                 child: TextField(
                                   maxLength: 12,
                                   controller: usersData.numberController,
                                   keyboardType: TextInputType.phone,
-                                  style: const TextStyle(color: Colors.orange),
+                                  style: const TextStyle(color: AppThem.appBgColor),
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius:
                                         BorderRadius.all(Radius.circular(15))),
-                                    labelText: "Enter Mobile Number",
-                                    labelStyle: TextStyle(color: Colors.orange),
+                                    labelText: "Enter Phone Number",
+                                    labelStyle: TextStyle(color: AppThem.appBgColor),
                                     prefixIcon:
-                                    Icon(Icons.phone, color: Colors.orange),
+                                    Icon(Icons.phone, color: AppThem.appBgColor),
                                   ),
                                 ),
                               ),
@@ -346,7 +358,7 @@ class AppDialog {
                               width: 5,
                             ),
                             FloatingActionButton.extended(
-                              backgroundColor: Colors.orange,
+                              backgroundColor: AppThem.appBgColor,
                               onPressed: () {
                                 AppDialog.navigatePage(context, UserContact());
                               },
@@ -378,7 +390,7 @@ class AppDialog {
                             child: ElevatedButton(
                               style: const ButtonStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.orange)),
+                                  WidgetStatePropertyAll(AppThem.appBgColor)),
                               onPressed: () {
                                 usersData.addNewUserWithFilter(context, contactProvider);
                               },
@@ -427,16 +439,16 @@ class AppDialog {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: 30, top: 20),
+                          padding: const EdgeInsets.only(left: 30, top: 20),
                           child: Text(
                             "Add New User",
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange),
+                                color: AppThem.appPrimaryColor),
                           ),
                         ),
                       ],
@@ -453,7 +465,7 @@ class AppDialog {
                         backgroundImage: userProvider.image == null
                             ? const AssetImage("assets/images/shakilansari.jpg")
                             : FileImage(File(userProvider.image!.path)),
-                        backgroundColor: Colors.orange,
+                        backgroundColor: AppThem.appBgColor,
                       ),
                     ),
                     Padding(
@@ -463,7 +475,7 @@ class AppDialog {
                         controller: userProvider.nameController,
                         keyboardType: TextInputType.name,
                         style: const TextStyle(
-                          color: Colors.orange,
+                          color:AppThem.appBgColor,
                         ),
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
@@ -471,21 +483,21 @@ class AppDialog {
                               Radius.circular(15),
                             ),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
                           labelText: "Enter Your Name",
-                          fillColor: Colors.orangeAccent,
+                          fillColor: AppThem.appBgColor,
                           labelStyle: TextStyle(color: Colors.orange),
                           prefixIcon: Icon(
                             Icons.person,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
@@ -500,7 +512,7 @@ class AppDialog {
                         maxLength: 12,
                         controller: userProvider.numberController,
                         keyboardType: TextInputType.phone,
-                        style: const TextStyle(color: Colors.orange),
+                        style: const TextStyle(color: AppThem.appBgColor),
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
@@ -512,16 +524,16 @@ class AppDialog {
                                 style: BorderStyle.solid),
                           ),
                           labelText: "Enter Mobile Number",
-                          fillColor: Colors.orangeAccent,
-                          labelStyle: TextStyle(color: Colors.orange),
+                          fillColor: AppThem.appBgColor,
+                          labelStyle: TextStyle(color: AppThem.appBgColor),
                           prefixIcon: Icon(
                             Icons.phone,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
@@ -537,7 +549,7 @@ class AppDialog {
                         child: ElevatedButton(
                           style:const ButtonStyle(
                               backgroundColor:
-                              WidgetStatePropertyAll(Colors.orange)),
+                              WidgetStatePropertyAll(AppThem.appBgColor)),
                           onPressed: () {
                             var name = userProvider.nameController.text.toString();
                             var number =userProvider.numberController.text.toString();

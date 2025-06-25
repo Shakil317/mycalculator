@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 class AppThem{
   static const Color appBgColor = Color(0xFF1d2630);
