@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
 import 'package:mycalculator/ViewModels/user_profile_provider.dart';
@@ -445,7 +446,7 @@ class _UserScreensState extends State<UserScreens> {
                             child: InstaImageViewer(
                               child: CircleAvatar(
                                 radius: 25,
-                                backgroundColor: Colors.green,
+                                backgroundColor: AppThem.appPrimaryColor,
                                 backgroundImage: (user.image != null &&
                                     user.image!.isNotEmpty)
                                     ? FileImage(File(user.image!))
@@ -474,24 +475,25 @@ class _UserScreensState extends State<UserScreens> {
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.call,
-                                      color: Colors.green),
-                                  title: const Text("Calling",
+                                      color: AppThem.appBgColor),
+                                  title:  Text("Calling",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.blue)),
+                                          fontSize: 14, color: AppThem.appPrimaryColor)),
                                   onTap: () {
                                     launchUrlString(
                                         "tel://${user.number.toString()}");
                                     Navigator.pop(context);
+
                                   },
                                 ),
                               ),
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.message,
-                                      color: Colors.green),
-                                  title: const Text("Message",
+                                      color: AppThem.appBgColor),
+                                  title: Text("Message",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.blue)),
+                                          fontSize: 14, color: AppThem.appPrimaryColor)),
                                   onTap: () async {
                                     final sms = Uri.parse('sms:${user.number.toString()}');
                                     if (await canLaunchUrl(sms)) {
@@ -500,27 +502,28 @@ class _UserScreensState extends State<UserScreens> {
                                       throw 'Could not launch $sms';
                                     }
                                     Navigator.pop(context);
+                                    Fluttertoast.showToast(msg: "jhgffguiojhgffg");
                                   },
                                 ),
                               ),
                               PopupMenuItem(
                                 child: ListTile(
                                   leading: const Icon(Icons.edit_note,
-                                      color: Colors.green),
-                                  title: const Text("Update User",
+                                      color: AppThem.appBgColor),
+                                  title: Text("Update User",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.red)),
+                                          fontSize: 14, color: AppThem.appPrimaryColor)),
                                   onTap: () {
                                     Navigator.pop(context);
                                     showDialog(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: const Text(
+                                          title: Text(
                                             "Update User",
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                color: Colors.pinkAccent),
+                                                color: AppThem.appPrimaryColor),
                                           ),
                                           content: Text(
                                             "Are you sure you want to Update User ${user.name}?",
@@ -590,7 +593,7 @@ class _UserScreensState extends State<UserScreens> {
                 ),
               ],
             ),
-            backgroundColor: Colors.orangeAccent,
+            backgroundColor: AppThem.appPrimaryColor,
           ),
         ],
       ),

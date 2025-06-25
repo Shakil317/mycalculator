@@ -6,6 +6,7 @@ import 'package:mycalculator/ViewModels/user_profile_provider.dart';
 import 'package:mycalculator/screens/user_contact.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
+import 'Utils/app_them.dart';
 import 'ViewModels/contact_provider.dart';
 import 'ViewModels/database_helper.dart';
 import 'ViewModels/user_provider.dart';
@@ -273,18 +274,18 @@ class AppDialog {
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
-                      side: const BorderSide(width: 3, color: Colors.orange),
+                      side: BorderSide(width: 3, color: AppThem.appPrimaryColor),
                     ),
                     color: Colors.white,
                     child: Column(
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 20, top: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 20),
                           child: Text("Add New User",
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange)),
+                                  color: AppThem.appPrimaryColor)),
                         ),
                         const SizedBox(height: 10),
                         InkWell(
@@ -296,7 +297,7 @@ class AppDialog {
                             backgroundImage: usersData.image != null
                                 ?  FileImage(File(usersData.image!.path))
                                 :const AssetImage("assets/images/shakilansari.jpg") ,
-                            backgroundColor: Colors.orange,
+                            backgroundColor: AppThem.appBgColor,
                           ),
                         ),
                         Padding(
@@ -305,14 +306,14 @@ class AppDialog {
                           child: TextField(
                             controller: usersData.nameController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
+                            style: const TextStyle(color: AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
-                              labelText: "Enter Your Name",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelText: "Enter Custemer Name",
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -321,23 +322,24 @@ class AppDialog {
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 10,
+                                top: 5
                               ),
                               child: SizedBox(
                                 width: 200,
-                                height: 60,
+                                height: 70,
                                 child: TextField(
                                   maxLength: 12,
                                   controller: usersData.numberController,
                                   keyboardType: TextInputType.phone,
-                                  style: const TextStyle(color: Colors.orange),
+                                  style: const TextStyle(color: AppThem.appBgColor),
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius:
                                         BorderRadius.all(Radius.circular(15))),
-                                    labelText: "Enter Mobile Number",
-                                    labelStyle: TextStyle(color: Colors.orange),
+                                    labelText: "Enter Phone Number",
+                                    labelStyle: TextStyle(color: AppThem.appBgColor),
                                     prefixIcon:
-                                    Icon(Icons.phone, color: Colors.orange),
+                                    Icon(Icons.phone, color: AppThem.appBgColor),
                                   ),
                                 ),
                               ),
@@ -346,7 +348,7 @@ class AppDialog {
                               width: 5,
                             ),
                             FloatingActionButton.extended(
-                              backgroundColor: Colors.orange,
+                              backgroundColor: AppThem.appBgColor,
                               onPressed: () {
                                 AppDialog.navigatePage(context, UserContact());
                               },
@@ -378,7 +380,7 @@ class AppDialog {
                             child: ElevatedButton(
                               style: const ButtonStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.orange)),
+                                  WidgetStatePropertyAll(AppThem.appBgColor)),
                               onPressed: () {
                                 usersData.addNewUserWithFilter(context, contactProvider);
                               },

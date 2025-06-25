@@ -352,7 +352,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                       child: Container(
                         height: 50,
                         width: 130,
-                        decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
+                        decoration: BoxDecoration(color: AppThem.appBgColor,borderRadius: BorderRadius.circular(30)),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -404,7 +404,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                       child: Container(
                         height: 50,
                         width: 130,
-                        decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(30)),
+                        decoration: BoxDecoration(color: AppThem.appBgColor,borderRadius: BorderRadius.circular(30)),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -461,13 +461,13 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 25, top: 20),
+                      padding: const EdgeInsets.only(left: 0, top: 20),
                       child: Text(
                         dialogTitle,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange,
+                          color: AppThem.appBgColor,
                         ),
                       ),
                     ),
@@ -481,16 +481,16 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               controller: controllerType,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.orange),
+                              style: const TextStyle(color: AppThem.appBgColor),
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
                                 labelText: "Enter amount here",
                                 hintText: "Enter amount here",
-                                hintStyle: TextStyle(color: Colors.orangeAccent),
-                                labelStyle: TextStyle(color: Colors.orange),
-                                prefixIcon: Icon(Icons.currency_rupee, color: Colors.orange),
+                                hintStyle: TextStyle(color: AppThem.appBgColor),
+                                labelStyle: TextStyle(color: AppThem.appBgColor),
+                                prefixIcon: Icon(Icons.currency_rupee, color: AppThem.appBgColor),
                               ),
                             ),
                           ),
@@ -502,7 +502,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           },
                           icon: const Icon(
                             Icons.calculate,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                             size: 30,
                           ),
                         ),
@@ -518,22 +518,22 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             child: TextField(
                               controller: creditProvider.dateController,
                               keyboardType: TextInputType.datetime,
-                              style: const TextStyle(color: Colors.orange),
+                              style: const TextStyle(color: AppThem.appBgColor),
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
                                 labelText: "Current Date",
                                 hintText: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-                                hintStyle: const TextStyle(color: Colors.orangeAccent),
-                                labelStyle: const TextStyle(color: Colors.orange),
+                                hintStyle: const TextStyle(color: AppThem.appBgColor),
+                                labelStyle: const TextStyle(color: AppThem.appBgColor),
                                 prefixIcon: IconButton(
                                   onPressed: () {
                                     creditProvider.selectedDate(context);
                                   },
                                   icon: const Icon(
                                     Icons.date_range,
-                                    color: Colors.orange,
+                                    color: AppThem.appBgColor,
                                     size: 18,
                                   ),
                                 ),
@@ -548,22 +548,22 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           child: TextField(
                             controller: creditProvider.timeController,
                             keyboardType: TextInputType.datetime,
-                            style: const TextStyle(color: Colors.orange),
+                            style: const TextStyle(color: AppThem.appBgColor),
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
                               labelText: "Current Time",
                               hintText: DateFormat('hh:mm a').format(DateTime.now()),
-                              hintStyle: const TextStyle(color: Colors.orangeAccent),
-                              labelStyle: const TextStyle(color: Colors.orange),
+                              hintStyle: const TextStyle(color: AppThem.appBgColor),
+                              labelStyle: const TextStyle(color: AppThem.appBgColor),
                               prefixIcon: IconButton(
                                 onPressed: () {
                                   creditProvider.selectedTime(context);
                                 },
                                 icon: const Icon(
                                   Icons.more_time_rounded,
-                                  color: Colors.orange,
+                                  color: AppThem.appBgColor,
                                   size: 16,
                                 ),
                               ),
@@ -581,18 +581,18 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             child: TextField(
                               controller: creditProvider.productRemarkController,
                               keyboardType: TextInputType.name,
-                              style: const TextStyle(color: Colors.orange),
+                              style: const TextStyle(color: AppThem.appBgColor),
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
                                 labelText: "Remark Item",
                                 hintText: "Remark Item",
-                                hintStyle: TextStyle(color: Colors.orangeAccent),
-                                labelStyle: TextStyle(color: Colors.orange),
+                                hintStyle: TextStyle(color: AppThem.appBgColor),
+                                labelStyle: TextStyle(color: AppThem.appBgColor),
                                 prefixIcon: Icon(
                                   Icons.production_quantity_limits,
-                                  color: Colors.orange,
+                                  color: AppThem.appBgColor,
                                 ),
                               ),
                             ),
@@ -605,7 +605,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           },
                           icon: const Icon(
                             Icons.shopping_bag_sharp,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                             size: 30,
                           ),
                         ),
@@ -619,7 +619,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                         height: 50,
                         child: ElevatedButton(
                           style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(Colors.orange),
+                            backgroundColor: WidgetStatePropertyAll(AppThem.appBgColor),
                           ),
                           onPressed: () {
                             if (controllerType.text.isNotEmpty || creditProvider.productRemarkController.text.isNotEmpty) {
