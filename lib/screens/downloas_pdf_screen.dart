@@ -97,7 +97,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
             child: Column(
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(top: 5.0),
+                  padding: EdgeInsets.only(top: 0.0,),
                   child: Text(
                     "Share Your Pdf:",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white),
@@ -137,7 +137,16 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
         child: Consumer<UserProfileProvider>(
           builder: (context, provider, child) {
             if (provider.userProfile.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
+              return  Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(color: Colors.red,),
+                  const SizedBox(height: 10,),
+                  ElevatedButton(style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppThem.appButtonColor)),onPressed: () async{
+                    await AppDialog.myProfileDialog(context);
+                  }, child: const Text("Update Profile",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),))
+                ],
+              ));
           }
             if (provider.userProfile.isEmpty) {
               return const Center(child: Text("No profile data found"));

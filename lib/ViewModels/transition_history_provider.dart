@@ -29,6 +29,19 @@ class TransitionHistoryProvider with ChangeNotifier{
     String generateId = const Uuid().v1();
     String creditId = generateId.replaceAll('-', '').substring(0, 6);
     String debitId = generateId.replaceAll('-', '').substring(0, 10);
+    int totalLoanedMoney = 0;
+    int totalReceivedMoney = 0;
+
+    for (var element in transitionList) {
+      if (element.loanedMoney != null && element.loanedMoney!.isNotEmpty) {
+        totalLoanedMoney += int.tryParse(element.loanedMoney!) ?? 0;
+      }
+      if (element.receivedMoney != null && element.receivedMoney!.isNotEmpty) {
+        totalReceivedMoney += int.tryParse(element.receivedMoney!) ?? 0;
+      }
+    }
+    yourCollectionData = totalLoanedMoney - totalReceivedMoney;
+    notifyListeners();
     var addTransition = {
       "transitionID": DateTime.now().microsecondsSinceEpoch ~/ 10000,
       "debitId": debitId,
@@ -40,10 +53,9 @@ class TransitionHistoryProvider with ChangeNotifier{
       "currentDate":dateController.text.toString(),
       "currentTime":timeController.text.toString(),
       "status" : status.toString(),
-      "allTransition":yourCollectionData.toString(),
+      "yourCollection":yourCollectionData.toString(),
     };
     await DatabaseHelper().insertTransition(addTransition);
-    Fluttertoast.showToast(msg: 'New Transition  ₹${status == "isReceive" ? creditAmountController.text.toString() : debitAmountController.text.toString()}',toastLength: Toast.LENGTH_LONG,backgroundColor: Colors.orange,textColor: Colors.white70,fontSize: 20,);
     showAmountTransition();
     Future.delayed(const Duration(milliseconds: 200), () {
       if (transitionScrollController.hasClients) {

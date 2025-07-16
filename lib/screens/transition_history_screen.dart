@@ -369,7 +369,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               states: 'isReceive');
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 0),
                           child: Container(
                             height: 50,
                             width: 130,
@@ -402,7 +402,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   Column(
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.only(top: 0),
                         child: Text(
                           "Your Collections",
                           style: TextStyle(
@@ -415,7 +415,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                         children: [
                           Center(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
+                              padding: const EdgeInsets.only(top: 0.0),
                               child: Text(
                                 "\u20B9 ${creditProvider.yourCollectionData}",
                                 style: TextStyle(
@@ -440,7 +440,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               states: 'isLoaned');
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 0),
                           child: Container(
                             height: 50,
                             width: 130,

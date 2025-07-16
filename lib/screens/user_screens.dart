@@ -145,7 +145,7 @@ class _UserScreensState extends State<UserScreens> {
                         child: CircleAvatar(
                           radius: 10,
                           backgroundImage:
-                              AssetImage("assets/images/Calculator_512.png"),
+                              AssetImage("assets/images/udaan_biz_logo.png"),
                         ))
                   ],
                 ),
@@ -165,7 +165,7 @@ class _UserScreensState extends State<UserScreens> {
                           await AppDialog.myProfileDialog(context);
                         },
                         child: const Text(
-                          "Add New Profile",
+                          "Add/Update Profile",
                           style: TextStyle(fontSize: 18, color: Colors.white70),
                         )),
                   ],
@@ -276,7 +276,7 @@ class _UserScreensState extends State<UserScreens> {
                       child: CircleAvatar(
                         radius: 10,
                         backgroundImage:
-                            AssetImage("assets/images/Calculator_512.png"),
+                            AssetImage("assets/images/udaan_biz_logo.png"),
                       ),
                     ),
                     TextButton(
