@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -24,7 +23,7 @@ class DatabaseHelper {
   static const creditId = "creditId";
   static const transitionId = "transitionId";
   static const type = "status";
-  static const myCollation = "allTransition";
+  static const myCollation = "yourCollection";
   static const usersID = "usersId";
 
   /// User Profile Details
@@ -96,10 +95,9 @@ class DatabaseHelper {
   /// await db.query('transitions', where: 'userId = ?', whereArgs: [userId]);
   //db.query(transactionsTable)
   Future<List<Map<String,dynamic>>> getTransition({required var userId})async{
-
-    if (kDebugMode) {
-      print("check userid :: $userId");
-    }
+    // if (kDebugMode) {
+    //   print("check userid :: $userId");
+    // }
     var db = await insertDatabase();
     return   db.query(transactionsTable,
       where: 'usersId = ?',

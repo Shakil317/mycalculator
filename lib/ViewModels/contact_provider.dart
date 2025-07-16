@@ -13,6 +13,8 @@ class ContactProvider with ChangeNotifier {
   List<Map<String, dynamic>> newUsers = [];
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController givenController = TextEditingController();
   List<Contact> contacts = [];
   bool isLoading = true;
 
