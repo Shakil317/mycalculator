@@ -54,9 +54,11 @@ class UserProvider with ChangeNotifier {
       "image": imagePath,
       "name": nameController.text.trim(),
       "number": numberController.text.trim(),
+     // "userCollections": 00,
     };
     await DatabaseHelper().insertUser(addUser);
-    Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.trim()}');
+    Fluttertoast.showToast(
+        msg: 'Add New User Success ${numberController.text.trim()}');
     showData();
     clearController();
     notifyListeners();
@@ -78,7 +80,8 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> pickNewImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = pickedFile;
     } else {
@@ -87,20 +90,23 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addNewUserWithFilter(BuildContext context, ContactProvider contactProvider) async {
+  Future<void> addNewUserWithFilter(
+      BuildContext context, ContactProvider contactProvider) async {
     String enteredName = nameController.text.trim();
     String enteredPhoneNumber = numberController.text.trim();
 
     if (enteredName.isNotEmpty && enteredPhoneNumber.isNotEmpty) {
       bool isPhoneNumberExist = contactProvider.contacts.any((contact) =>
           contact.phones.any((phone) =>
-          phone.number.replaceAll(RegExp(r'\D'), '') == enteredPhoneNumber));
+              phone.number.replaceAll(RegExp(r'\D'), '') ==
+              enteredPhoneNumber));
       bool isNameExist = contactProvider.contacts.any((contact) =>
-      contact.displayName?.toLowerCase() == enteredName.toLowerCase());
+          contact.displayName.toLowerCase() == enteredName.toLowerCase());
 
       if (isPhoneNumberExist || isNameExist) {
         Fluttertoast.showToast(
-            msg: "This phone number or name already exists. Please click on contact button.");
+            msg:
+                "This phone number or name already exists. Please click on contact button.");
         AppDialog.navigatePage(context, const UserContact());
       } else {
         insertNewUser(context);
@@ -130,7 +136,6 @@ class UserProvider with ChangeNotifier {
         localizedReason: "Scan Your Finger Print to Proceed",
         options: const AuthenticationOptions(useErrorDialogs: true),
       );
-
       if (results) {
         if (userModel.id == null) {
           Fluttertoast.showToast(msg: "Invalid user ID");
@@ -165,13 +170,11 @@ class UserProvider with ChangeNotifier {
   void checkLocalAuthAndDeleteUser(BuildContext context, int index) async {
     bool isAvailable = await localAuth.canCheckBiometrics;
     Fluttertoast.showToast(msg: "is Available");
-
     if (isAvailable) {
       bool results = await localAuth.authenticate(
         localizedReason: "Scan Your Finger Print to Proceed",
         options: const AuthenticationOptions(useErrorDialogs: true),
       );
-
       if (results) {
         DatabaseHelper().deleteUser(filteredUsers[index].id!);
         Navigator.pop(context);

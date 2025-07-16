@@ -5,7 +5,6 @@ import 'package:local_auth/local_auth.dart';
 import 'package:mycalculator/ViewModels/database_helper.dart';
 import 'package:mycalculator/models/creadit_debit_model.dart';
 import 'package:uuid/uuid.dart';
-
 class TransitionHistoryProvider with ChangeNotifier{
   TextEditingController dateController = TextEditingController(text:DateFormat('dd-MM-yyyy').format(DateTime.now()),);
   TextEditingController timeController = TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()),);
@@ -15,10 +14,8 @@ class TransitionHistoryProvider with ChangeNotifier{
   TextEditingController creditAmountController = TextEditingController();
   ScrollController transitionScrollController = ScrollController();
   final LocalAuthentication localAuth = LocalAuthentication();
-
   var usersId = 0;
-   int yourCollectionData  = 0;
-
+  int yourCollectionData  = 0;
   Future<void> addToListUser() async {
     transitionList.clear();
     final transitions = await DatabaseHelper().getTransition(userId: usersId);
@@ -28,9 +25,22 @@ class TransitionHistoryProvider with ChangeNotifier{
   void insertNewTransition(BuildContext context, {required String status}) async {
     String generateId = const Uuid().v1();
     String creditId = generateId.replaceAll('-', '').substring(0, 6);
-    String debitId = generateId.replaceAll('-', '').substring(0, 10);
+    String debitId = generateId.replaceAll('-', '').substring(0, 6);
+    int totalLoanedMoney = 0;
+    int totalReceivedMoney = 0;
+    for (var element in transitionList) {
+      if (element.loanedMoney != null && element.loanedMoney!.isNotEmpty) {
+        totalLoanedMoney += int.tryParse(element.loanedMoney!) ?? 0;
+      }
+      if (element.receivedMoney != null && element.receivedMoney!.isNotEmpty) {
+        totalReceivedMoney += int.tryParse(element.receivedMoney!) ?? 0;
+      }
+    }
+    yourCollectionData = totalLoanedMoney - totalReceivedMoney;
+    //DatabaseHelper().insertUser(yourCollectionData as Map<String, dynamic>);
+    notifyListeners();
     var addTransition = {
-      "transitionID": DateTime.now().microsecondsSinceEpoch ~/ 10000,
+      "transitionId": (DateTime.now().microsecondsSinceEpoch ~/ 10000) % 1000000,
       "debitId": debitId,
       "creditId": creditId,
       "usersId":usersId,
@@ -40,10 +50,9 @@ class TransitionHistoryProvider with ChangeNotifier{
       "currentDate":dateController.text.toString(),
       "currentTime":timeController.text.toString(),
       "status" : status.toString(),
-      "allTransition":yourCollectionData.toString(),
+      "yourCollection":yourCollectionData.toString(),
     };
     await DatabaseHelper().insertTransition(addTransition);
-    Fluttertoast.showToast(msg: 'New Transition  ₹${status == "isReceive" ? creditAmountController.text.toString() : debitAmountController.text.toString()}',toastLength: Toast.LENGTH_LONG,backgroundColor: Colors.orange,textColor: Colors.white70,fontSize: 20,);
     showAmountTransition();
     Future.delayed(const Duration(milliseconds: 200), () {
       if (transitionScrollController.hasClients) {
@@ -57,12 +66,12 @@ class TransitionHistoryProvider with ChangeNotifier{
     notifyListeners();
     clearControllers();
   }
-  void deleteTransition(BuildContext context, var index) async {
-    await DatabaseHelper().deleteTransition(transitionList[index].transitionID!);
-    Navigator.pop(context);
-    showAmountTransition();
-    notifyListeners();
-  }
+  // void deleteTransition(BuildContext context, var index,) async {
+  //   await DatabaseHelper().deleteTransition(transitionList[index].transitionId!);
+  //   Navigator.pop(context);
+  //   showAmountTransition();
+  //   notifyListeners();
+  // }
 
   void showAmountTransition() async {
     transitionList.clear();
@@ -92,7 +101,6 @@ class TransitionHistoryProvider with ChangeNotifier{
       dateController.text = formattedDate;
     }
     notifyListeners();
-
   }
   Future<void> selectedTime(BuildContext context) async {
     TimeOfDay? setTime = await showTimePicker(
@@ -109,7 +117,19 @@ class TransitionHistoryProvider with ChangeNotifier{
     }
     notifyListeners();
   }
-  void checkLocalAuthTransitionDelete(BuildContext context, var index)async{
+
+  void deleteTransition(BuildContext context, int index) async {
+    final id = transitionList[index].transitionId;
+    if (id != null) {
+      final rows = await DatabaseHelper().deleteTransition(id);
+      Fluttertoast.showToast(msg: "Deleted rows: $rows, ID: $id");
+      showAmountTransition();
+      notifyListeners();
+    } else {
+      Fluttertoast.showToast(msg: "transitionId is null!");
+    }
+  }
+  void checkLocalAuthTransitionDelete(BuildContext context, int transitionId)async{
     bool isAvailable;
     isAvailable = await localAuth.canCheckBiometrics;
     Fluttertoast.showToast(msg: "is Available");
@@ -122,19 +142,17 @@ class TransitionHistoryProvider with ChangeNotifier{
         //options:  AuthenticationOptions(biometricOnly: true),
       );
       if(results){
-        DatabaseHelper()
-            .deleteTransition(transitionList[index].transitionID);
-        Navigator.pop(context);
+        await DatabaseHelper().deleteTransition(transitionId);
+        Fluttertoast.showToast(msg: "Deleting transitionId: $transitionId");
         showAmountTransition();
+         notifyListeners();
       }else{
         Fluttertoast.showToast(msg: "Permission Denied");
       }
     }else{
       Fluttertoast.showToast(msg: "No Biometric sensor detected");
     }
-
   }
-
   void clearControllers(){
     productRemarkController.clear();
     creditAmountController.clear();

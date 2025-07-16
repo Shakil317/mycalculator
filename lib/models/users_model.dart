@@ -5,6 +5,7 @@ class UsersModel {
   final String? number;
   final String? image;
   final String? dateTime;
+  final String? userCollections;
 
   UsersModel({
     this.userId,
@@ -13,6 +14,7 @@ class UsersModel {
     this.number,
     this.image,
     this.dateTime,
+    this.userCollections
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class UsersModel {
       'number': number,
       'image': image,
       'dateTime':dateTime,
+      'userCollections':userCollections,
     };
   }
   factory UsersModel.fromMap(Map<String, dynamic> map) {
@@ -33,6 +36,7 @@ class UsersModel {
       number: map['number'],
       image: map['image'],
       dateTime: map['dateTime'],
+      userCollections: map['userCollections'],
     );
   }
 }

@@ -174,7 +174,7 @@ class _UserContactState extends State<UserContact>
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-         AppDialog.showAppDialog(context);
+         AppDialog.showUserProfileDialog(context);
         },
         label: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.green,

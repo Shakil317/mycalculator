@@ -1,5 +1,6 @@
 class CreditDebitModel {
-  final dynamic transitionID;
+  final dynamic usersId;
+  final dynamic transitionId;
   final dynamic creditId;
   final dynamic debitId;
   final String? remarkItem;
@@ -8,8 +9,11 @@ class CreditDebitModel {
   final String? currentDate;
   final String? currentTime;
   final String? isReceived;
+  final String? yourCollection;
+
   CreditDebitModel({
-    this.transitionID,
+    this.usersId,
+    this.transitionId,
     this.creditId,
     this.debitId,
     required this.remarkItem,
@@ -18,11 +22,13 @@ class CreditDebitModel {
     required this.currentDate,
     required this.currentTime,
     required this.isReceived,
+    required this.yourCollection
   });
   factory CreditDebitModel.fromMap(Map<String, dynamic> map) {
     return CreditDebitModel(
+      usersId: map['usersId'],
       remarkItem: map['remarkItem'],
-      transitionID: map['transitionID'],
+      transitionId: map['transitionId'],
       creditId: map['creditId'],
       debitId: map['debitId'],
       loanedMoney: map['loanedMoney'],
@@ -30,18 +36,21 @@ class CreditDebitModel {
       currentDate: map['currentDate'],
       currentTime: map['currentTime'],
       isReceived: map['status'],
+      yourCollection: map['yourCollection'],
     );
   }
   Map<String, dynamic> toMap() {
     return {
+      'usersId':usersId,
       'remarkItem': remarkItem,
-      'transitionID': transitionID,
+      'transitionId': transitionId,
       'creditId': creditId,
       'debitId': debitId,
       'loanedMoney': loanedMoney,
       'receivedMoney': receivedMoney,
       'currentDate': currentDate,
       'currentTime': currentTime,
+      'yourCollection':yourCollection,
     };
   }
 }

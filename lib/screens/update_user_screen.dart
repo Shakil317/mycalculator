@@ -15,10 +15,15 @@ class UpdateUserScreen extends StatefulWidget {
 }
 
 class _UpdateUserScreenState extends State<UpdateUserScreen> {
- late final ContactProvider  contactProvider;
+ late   ContactProvider  contactProvider;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      contactProvider = Provider.of<ContactProvider>(context, listen: false);
+      contactProvider.fetchContact();
+      showUsers();
+    });
 
   }
   void showUsers(){
@@ -35,7 +40,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
     BuildContext context,
   ) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-     contactProvider = Provider.of<ContactProvider>(context);
+     contactProvider = Provider.of<ContactProvider>(context,listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -85,8 +90,8 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                   borderRadius: BorderRadius.circular(20),
                   child: userProvider.image == null
                       ? (widget.user.image == null
-                      ? Image.asset("assets/images/shakilansari.jpg", fit: BoxFit.cover)
-                      : Image.file(File(widget.user.image!), fit: BoxFit.cover))
+                      ? Image.asset("assets/images/Profile_image.png", fit: BoxFit.cover)
+                      : Image.file(File(widget.user.image!), fit: BoxFit.fill))
                       : Image.file(File(userProvider.image!.path), fit: BoxFit.cover),
                 ),
               ),
@@ -128,10 +133,11 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     child: TextField(
-                      decoration: InputDecoration(
+                      controller: contactProvider.givenController,
+                      decoration: const InputDecoration(
                         labelText: "Given Name",
                         labelStyle: TextStyle(
                             fontSize: 16,
@@ -188,10 +194,12 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     child: TextField(
-                      decoration: InputDecoration(
+                      controller:contactProvider.emailController ,
+                      readOnly: true,
+                      decoration: const InputDecoration(
                         labelText: "Gmail Address",
                         labelStyle: TextStyle(
                             fontSize: 16,

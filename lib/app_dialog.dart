@@ -2,14 +2,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mycalculator/ViewModels/user_profile_provider.dart';
+import 'package:mycalculator/screens/tamplete_screen.dart';
 import 'package:mycalculator/screens/user_contact.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
 import 'Utils/app_them.dart';
 import 'ViewModels/contact_provider.dart';
 import 'ViewModels/database_helper.dart';
+import 'ViewModels/transition_history_provider.dart';
 import 'ViewModels/user_provider.dart';
+import 'calculator_screens/calculator_screen.dart';
 class AppDialog {
   static void navigatePage(BuildContext context , var pageName){
     Navigator.push(context, MaterialPageRoute(builder: (context) =>  pageName,
@@ -48,13 +52,13 @@ class AppDialog {
                     color: Colors.white,
                     child: Column(
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 20, top: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, top: 20),
                           child: Text("Edit Your Profile",
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange)),
+                                  color: AppThem.appPrimaryColor)),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -62,14 +66,14 @@ class AppDialog {
                           child: TextField(
                             controller: value.shopNameController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
+                            style: const TextStyle(color:AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
                               labelText: "Enter Your Shop / Company / Name",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -79,14 +83,14 @@ class AppDialog {
                           child: TextField(
                             controller: value.phoneController,
                             keyboardType: TextInputType.name,
-                            style: const TextStyle(color: Colors.orange),
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
+                            style: const TextStyle(color: AppThem.appBgColor),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
                               labelText: "Enter Your Phone or Email",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelStyle: TextStyle(color: AppThem.appPrimaryColor),
+                              prefixIcon: const Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -97,14 +101,14 @@ class AppDialog {
                             controller: value.bankInfoController,
                             keyboardType: TextInputType.name,
                             style:  const TextStyle(
-                                color: Colors.orange),
+                                color: AppThem.appBgColor),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
-                              labelText: "Enter Your Address/ Bank Info",
-                              labelStyle: TextStyle(color: Colors.orange),
-                              prefixIcon: Icon(Icons.person, color: Colors.orange),
+                              labelText: "Enter Your Address/ Shop Info",
+                              labelStyle: TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
                             ),
                           ),
                         ),
@@ -112,7 +116,7 @@ class AppDialog {
                           children: [
                             InkWell(
                               onTap: () {
-                                value.pickNewImage('qr');
+                                value.pickNewImage("profile");
                               },
                               child:
                               Padding(
@@ -120,21 +124,22 @@ class AppDialog {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(12.0),
                                       child: Container(
                                         height: 80,
                                         width: 80,
-                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
+                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1),color: Colors.green),
                                         child:
                                         Image(
-                                          image: value.qrImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
-                                              : FileImage(File(value.qrImage!.path)),
+                                          image: value.prImage == null
+                                              ? const AssetImage("assets/images/Profile_image.png")
+                                              : FileImage(File(value.prImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload QR",style: TextStyle(color: Colors.orangeAccent),)
+                                    Text("Upload Profile",style: TextStyle(color: AppThem.appPrimaryColor),)
+
                                   ],
                                 ),
                               ),
@@ -157,13 +162,13 @@ class AppDialog {
                                         decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
                                         child: Image(
                                           image: value.stampImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
+                                              ? const AssetImage("assets/images/shop_keeper_image.jpg")
                                               : FileImage(File(value.stampImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload Stamp",style: TextStyle(color: Colors.orangeAccent),)
+                                     Text("Upload Stamp",style: TextStyle(color:AppThem.appPrimaryColor),)
                                   ],
                                 ),
                               ),
@@ -171,7 +176,7 @@ class AppDialog {
                             const SizedBox(width: 10,),
                             InkWell(
                               onTap: () {
-                                value.pickNewImage("profile");
+                                value.pickNewImage('qr');
                               },
                               child:
                               Padding(
@@ -179,21 +184,21 @@ class AppDialog {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                       child: Container(
                                         height: 80,
                                         width: 80,
-                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1),color: Colors.green),
+                                        decoration: BoxDecoration(border: Border.all(color: Colors.orangeAccent,width: 1)),
                                         child:
                                         Image(
-                                          image: value.prImage == null
-                                              ? const AssetImage("assets/images/shakil_upi_scaner.jpg")
-                                              : FileImage(File(value.prImage!.path)),
+                                          image: value.qrImage == null
+                                              ? const AssetImage("assets/images/dumi_scaner_image.jpg")
+                                              : FileImage(File(value.qrImage!.path)),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                    const Text("Upload Profile",style: TextStyle(color: Colors.orangeAccent),)
+                                    Text("Upload QR",style: TextStyle(color: AppThem.appPrimaryColor),)
                                   ],
                                 ),
                               ),
@@ -209,11 +214,20 @@ class AppDialog {
                             child: ElevatedButton(
                               style: const ButtonStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.orange)),
+                                  WidgetStatePropertyAll(AppThem.appBgColor)),
                               onPressed: () async {
-                                value.createOrUpdateProfile(context);
-                                profileProvider.clearController();
-                                Navigator.pop(context);
+                                var name = profileProvider.shopNameController.text.toString();
+                                var number = profileProvider.phoneController.text.toString();
+                                var shopInfo = profileProvider.bankInfoController.text.toString();
+                                var qrImage = profileProvider.qrImage.toString();
+                                var prImage = profileProvider.userProfile.toString();
+                                if(name.isNotEmpty && number.isNotEmpty && shopInfo.isNotEmpty && qrImage.isNotEmpty && prImage.isNotEmpty){
+                                  value.createOrUpdateProfile(context);
+                                  profileProvider.clearController();
+                                  Navigator.pop(context);
+                                }else{
+                                  Fluttertoast.showToast(msg: "please fill in all blanks");
+                                }
                               },
                               child:
                               Text(profileProvider.isProfileExist ? "Update" : "Save",
@@ -256,9 +270,8 @@ class AppDialog {
     }
   }
 
-  static void showAppDialog(BuildContext context) {
+  static void showUserProfileDialog(BuildContext context) {
     var contactProvider = Provider.of<ContactProvider>(context, listen: false);
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
@@ -296,7 +309,7 @@ class AppDialog {
                             radius: 40,
                             backgroundImage: usersData.image != null
                                 ?  FileImage(File(usersData.image!.path))
-                                :const AssetImage("assets/images/shakilansari.jpg") ,
+                                :const AssetImage("assets/images/Profile_image.png") ,
                             backgroundColor: AppThem.appBgColor,
                           ),
                         ),
@@ -322,7 +335,7 @@ class AppDialog {
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 10,
-                                top: 5
+                                top: 4
                               ),
                               child: SizedBox(
                                 width: 200,
@@ -345,7 +358,7 @@ class AppDialog {
                               ),
                             ),
                             const SizedBox(
-                              width: 5,
+                              width: 3,
                             ),
                             FloatingActionButton.extended(
                               backgroundColor: AppThem.appBgColor,
@@ -429,16 +442,16 @@ class AppDialog {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: 30, top: 20),
+                          padding: const EdgeInsets.only(left: 30, top: 20),
                           child: Text(
                             "Add New User",
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange),
+                                color: AppThem.appPrimaryColor),
                           ),
                         ),
                       ],
@@ -455,7 +468,7 @@ class AppDialog {
                         backgroundImage: userProvider.image == null
                             ? const AssetImage("assets/images/shakilansari.jpg")
                             : FileImage(File(userProvider.image!.path)),
-                        backgroundColor: Colors.orange,
+                        backgroundColor: AppThem.appBgColor,
                       ),
                     ),
                     Padding(
@@ -465,7 +478,7 @@ class AppDialog {
                         controller: userProvider.nameController,
                         keyboardType: TextInputType.name,
                         style: const TextStyle(
-                          color: Colors.orange,
+                          color:AppThem.appBgColor,
                         ),
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
@@ -473,21 +486,21 @@ class AppDialog {
                               Radius.circular(15),
                             ),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
                           labelText: "Enter Your Name",
-                          fillColor: Colors.orangeAccent,
+                          fillColor: AppThem.appBgColor,
                           labelStyle: TextStyle(color: Colors.orange),
                           prefixIcon: Icon(
                             Icons.person,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
@@ -502,7 +515,7 @@ class AppDialog {
                         maxLength: 12,
                         controller: userProvider.numberController,
                         keyboardType: TextInputType.phone,
-                        style: const TextStyle(color: Colors.orange),
+                        style: const TextStyle(color: AppThem.appBgColor),
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
@@ -514,16 +527,16 @@ class AppDialog {
                                 style: BorderStyle.solid),
                           ),
                           labelText: "Enter Mobile Number",
-                          fillColor: Colors.orangeAccent,
-                          labelStyle: TextStyle(color: Colors.orange),
+                          fillColor: AppThem.appBgColor,
+                          labelStyle: TextStyle(color: AppThem.appBgColor),
                           prefixIcon: Icon(
                             Icons.phone,
-                            color: Colors.orange,
+                            color: AppThem.appBgColor,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide: BorderSide(
-                              color: Colors.orange,
+                              color: AppThem.appBgColor,
                               width: 2,
                             ),
                           ),
@@ -539,7 +552,7 @@ class AppDialog {
                         child: ElevatedButton(
                           style:const ButtonStyle(
                               backgroundColor:
-                              WidgetStatePropertyAll(Colors.orange)),
+                              WidgetStatePropertyAll(AppThem.appBgColor)),
                           onPressed: () {
                             var name = userProvider.nameController.text.toString();
                             var number =userProvider.numberController.text.toString();
@@ -570,6 +583,251 @@ class AppDialog {
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void amountUpdateDialog(BuildContext context, {required String dialogTitle,
+  required TextEditingController controllerType,
+  required String states,
+  }){
+    var creditProvider = Provider.of<TransitionHistoryProvider>(
+      context,
+      listen: false,
+    );
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: double.infinity,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  side: const BorderSide(width: 3, color: Colors.orange),
+                ),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 0, top: 20),
+                      child: Text(
+                        dialogTitle,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppThem.appBgColor,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 55, top: 10),
+                          child: SizedBox(
+                            width: 200,
+                            child: TextField(
+                              maxLength: 5,
+                              controller: controllerType,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: AppThem.appBgColor),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                                ),
+                                labelText: "Enter amount here",
+                                hintText: "Enter amount here",
+
+                                hintStyle: TextStyle(color: AppThem.appBgColor),
+                                labelStyle:
+                                TextStyle(color: AppThem.appBgColor),
+                                prefixIcon: Icon(Icons.currency_rupee,
+                                    color: AppThem.appBgColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        IconButton(
+                          onPressed: () {
+                            AppDialog.navigatePage(
+                                context, const CalculateScreen());
+                          },
+                          icon: const Icon(
+                            Icons.calculate,
+                            color: AppThem.appBgColor,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15, top: 20, bottom: 10),
+                          child: SizedBox(
+                            width: 160,
+                            height: 45,
+                            child: TextField(
+                              controller: creditProvider.dateController,
+                              keyboardType: TextInputType.datetime,
+                              style: const TextStyle(color: AppThem.appBgColor),
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                                ),
+                                labelText: "Current Date",
+                                hintText: DateFormat('dd-MM-yyyy')
+                                    .format(DateTime.now()),
+                                hintStyle:
+                                const TextStyle(color: AppThem.appBgColor),
+                                labelStyle:
+                                const TextStyle(color: AppThem.appBgColor),
+                                prefixIcon: IconButton(
+                                  onPressed: () {
+                                    creditProvider.selectedDate(context);
+                                  },
+                                  icon: const Icon(
+                                    Icons.date_range,
+                                    color: AppThem.appBgColor,
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        SizedBox(
+                          width: 150,
+                          height: 45,
+                          child: TextField(
+                            controller: creditProvider.timeController,
+                            keyboardType: TextInputType.datetime,
+                            style: const TextStyle(color: AppThem.appBgColor),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(15)),
+                              ),
+                              labelText: "Current Time",
+                              hintText:
+                              DateFormat('hh:mm a').format(DateTime.now()),
+                              hintStyle:
+                              const TextStyle(color: AppThem.appBgColor),
+                              labelStyle:
+                              const TextStyle(color: AppThem.appBgColor),
+                              prefixIcon: IconButton(
+                                onPressed: () {
+                                  creditProvider.selectedTime(context);
+                                },
+                                icon: const Icon(
+                                  Icons.more_time_rounded,
+                                  color: AppThem.appBgColor,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, top: 10),
+                          child: SizedBox(
+                            width: 250,
+                            child: TextField(
+                              maxLength: 25,
+                              controller:
+                              creditProvider.productRemarkController,
+                              keyboardType: TextInputType.name,
+                              style: const TextStyle(color: AppThem.appBgColor),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                                ),
+                                labelText: "Remark Item",
+                                hintText: "Remark Item",
+                                hintStyle: TextStyle(color: AppThem.appBgColor),
+                                labelStyle:
+                                TextStyle(color: AppThem.appBgColor),
+                                prefixIcon: Icon(
+                                  Icons.production_quantity_limits,
+                                  color: AppThem.appBgColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        IconButton(
+                          onPressed: () {
+                            AppDialog.navigatePage(
+                                context, const AdminTemplateListScreen(id: null,));
+                          },
+                          icon: const Icon(
+                            Icons.shopping_bag_sharp,
+                            color: AppThem.appBgColor,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: SizedBox(
+                        width: 350,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: const ButtonStyle(
+                            backgroundColor:
+                            WidgetStatePropertyAll(AppThem.appBgColor),
+                          ),
+                          onPressed: () {
+                            if (controllerType.text.isNotEmpty ||
+                                creditProvider
+                                    .productRemarkController.text.isNotEmpty) {
+                              creditProvider.insertNewTransition(
+                                context,
+                                status: states.toString(),
+                              );
+                              Navigator.pop(context);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Please fill in Amount and Remark");
+                            }
+                          },
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

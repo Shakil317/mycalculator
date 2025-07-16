@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:mycalculator/Utils/app_them.dart';
+import 'package:mycalculator/app_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -96,7 +97,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
             child: Column(
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(top: 5.0),
+                  padding: EdgeInsets.only(top: 0.0,),
                   child: Text(
                     "Share Your Pdf:",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white),
@@ -136,9 +137,17 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
         child: Consumer<UserProfileProvider>(
           builder: (context, provider, child) {
             if (provider.userProfile.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
+              return  Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(color: Colors.red,),
+                  const SizedBox(height: 10,),
+                  ElevatedButton(style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppThem.appButtonColor)),onPressed: () async{
+                    await AppDialog.myProfileDialog(context);
+                  }, child: const Text("Update Profile",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),))
+                ],
+              ));
+          }
             if (provider.userProfile.isEmpty) {
               return const Center(child: Text("No profile data found"));
             }
@@ -153,8 +162,8 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                       Container(
                         width: MediaQuery.of(context).size.width * 1,
                         height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
+                        decoration:  const BoxDecoration(
+                          borderRadius:  BorderRadius.only(
                             topLeft: Radius.circular(10),
                             topRight: Radius.circular(10),
                           ),
@@ -218,10 +227,10 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                             5: FixedColumnWidth(60),
                           },
                           children: [
-                            TableRow(
+                            const TableRow(
                               decoration:
                                   BoxDecoration(color: AppThem.appBgColor),
-                              children: const [
+                              children: [
                                 Center(
                                     child: Text("No",
                                         style: TextStyle(
