@@ -11,6 +11,7 @@ class DatabaseHelper {
   static const  columnId = "id";
   static const  userId = "userId_321";
   static const image = "image";
+  static const userCollections = "userCollections";
 
   /// User Transition Details
   static const transactionsTable = "TransactionsHistory";
@@ -43,7 +44,7 @@ class DatabaseHelper {
       path,
       version: dbVersion,
       onCreate: (db, version) {
-        db.execute("CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT)");
+        db.execute("CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT, $userCollections TEXT)");
         db.execute("CREATE TABLE $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT,$debitId INTEGER,$creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT, $myCollation TEXT, $usersID TEXT)");
         db.execute("CREATE TABLE $myProfileTable($profileId TEXT PRIMARY KEY,$shopName TEXT,$profileContact TEXT, $bankInfo TEXT, $prImage TEXT, $qrImage TEXT,$uploadStamp TEXT)");
       },
@@ -52,7 +53,7 @@ class DatabaseHelper {
           db.execute(
               "CREATE TABLE IF NOT EXISTS $transactionsTable($transitionId INTEGER PRIMARY KEY AUTOINCREMENT, $debitId INTEGER, $creditId INTEGER, $loanedMoney TEXT, $receiveMoney TEXT, $remarkItemName TEXT, $currentDate TEXT, $currentTime TEXT, $type TEXT,  $myCollation TEXT, $usersID TEXT)");
           db.execute(
-              "CREATE TABLE IF NOT EXISTS $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT)");
+              "CREATE TABLE IF NOT EXISTS $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $userId INTEGER, $userName TEXT, $userNumber TEXT, $image TEXT, $userCollections TEXT)");
           db.execute(
               "CREATE TABLE IF NOT EXISTS $myProfileTable($profileId TEXT PRIMARY KEY,$shopName TEXT,$profileContact TEXT, $bankInfo TEXT, $prImage TEXT, $qrImage TEXT, $uploadStamp TEXT)");
         }
@@ -87,17 +88,17 @@ class DatabaseHelper {
     var db = await insertDatabase();
     return   db.update(transactionsTable, transition,where: "transitionId=?",whereArgs: [transitionId]);
   }
-  Future<int> deleteTransition(int transitionDeleteId)async{
+  Future<int> deleteTransition(int transitionId) async {
     var db = await insertDatabase();
-    return await  db.delete(transactionsTable, where: "transitionId=?",whereArgs: [transitionDeleteId]);
+    return await db.delete(transactionsTable, where: "transitionId = ?", whereArgs: [transitionId]);
   }
 
   /// await db.query('transitions', where: 'userId = ?', whereArgs: [userId]);
-  //db.query(transactionsTable)
+  ///db.query(transactionsTable)
   Future<List<Map<String,dynamic>>> getTransition({required var userId})async{
-    // if (kDebugMode) {
-    //   print("check userid :: $userId");
-    // }
+    /// if (kDebugMode) {
+    ///   print("check userid :: $userId");
+    /// }
     var db = await insertDatabase();
     return   db.query(transactionsTable,
       where: 'usersId = ?',

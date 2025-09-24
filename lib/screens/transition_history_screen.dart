@@ -10,7 +10,6 @@ import 'package:mycalculator/screens/tamplete_screen.dart';
 import 'package:provider/provider.dart';
 import '../Utils/app_them.dart';
 import '../ViewModels/transition_history_provider.dart';
-
 class TransitionHistoryScreen extends StatefulWidget {
   final String? name;
   final int? id;
@@ -27,8 +26,6 @@ class TransitionHistoryScreen extends StatefulWidget {
 
 class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
   late TransitionHistoryProvider creditProvider;
-  final GlobalKey _shareListKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
@@ -71,11 +68,10 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                 page: DownloadsPdfScreenState(name: widget.name ?? ""),
               );
             },
-          )
+          ),
         ],
       ),
-      body:
-          Consumer<TransitionHistoryProvider>(builder: (context, data, child) {
+      body: Consumer<TransitionHistoryProvider>(builder: (context, data, child) {
         data.transitionList.toSet().toList();
         return ListView.builder(
           controller: data.transitionScrollController,
@@ -90,9 +86,9 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     ),
                     child: GestureDetector(
                       onLongPress: () {
-                        creditProvider.checkLocalAuthTransitionDelete(
-                            context, item.creditId);
-                        Fluttertoast.showToast(msg: "OnLongPress");
+                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Receive Amount ${item.receivedMoney} ?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
+                          creditProvider.checkLocalAuthTransitionDelete(context, item.transitionId!);});
+                        creditProvider.showAmountTransition();
                       },
                       child: Card(
                         color: Colors.white70,
@@ -219,9 +215,10 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     padding: const EdgeInsets.only(left: 50, right: 5),
                     child: GestureDetector(
                       onLongPress: () {
-                        Fluttertoast.showToast(msg: "onLongPress");
-                        creditProvider.checkLocalAuthTransitionDelete(
-                            context, item.debitId);
+                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Loaned Amount ${item.loanedMoney}?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
+                          creditProvider.checkLocalAuthTransitionDelete( context, item.transitionId);
+                        });
+                        creditProvider.showAmountTransition();
                       },
                       child: Card(
                         color: Colors.white70,
@@ -416,8 +413,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(top: 0.0),
-                              child: Text(
-                                "\u20B9 ${creditProvider.yourCollectionData}",
+                              child: Text("\u20B9 ${creditProvider.yourCollectionData}",
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Colors.redAccent.shade200),
@@ -433,11 +429,8 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          showAppDialog(
-                              dialogTitle: "Loaned Money",
-                              controllerType:
-                                  creditProvider.creditAmountController,
-                              states: 'isLoaned');
+                          showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.creditAmountController, states: 'isLoaned');
+                          creditProvider.clearControllers();
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 0),
@@ -668,7 +661,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                         IconButton(
                           onPressed: () {
                             AppDialog.navigatePage(
-                                context, const AdminTemplateListScreen());
+                                context, const AdminTemplateListScreen(id: null,));
                           },
                           icon: const Icon(
                             Icons.shopping_bag_sharp,

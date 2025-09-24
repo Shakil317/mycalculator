@@ -17,6 +17,7 @@ class UserProvider with ChangeNotifier {
   List<UsersModel> users = [];
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
   final LocalAuthentication localAuth = LocalAuthentication();
 
   UserProvider() {
@@ -50,15 +51,19 @@ class UserProvider with ChangeNotifier {
     String userId = const Uuid().v4();
     String? imagePath = image?.path;
     var addUser = {
-      "userId_321": userId.replaceAll('-', ' ').substring(0, 10),
+      "userId_321": userId.replaceAll('-', ' ').substring(0, 6),
       "image": imagePath,
       "name": nameController.text.trim(),
       "number": numberController.text.trim(),
+      "userCollections": amountController.text.trim().isEmpty
+          ? "00"
+          : amountController.text.trim(),
     };
     await DatabaseHelper().insertUser(addUser);
-    Fluttertoast.showToast(msg: 'Add New User Success ${numberController.text.trim()}');
+    Fluttertoast.showToast(
+        msg: 'Add New User Success ${numberController.text.trim()}');
     showData();
-    clearController();
+    // clearController();
     notifyListeners();
   }
 
@@ -78,7 +83,8 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> pickNewImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = pickedFile;
     } else {
@@ -87,20 +93,22 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addNewUserWithFilter(BuildContext context, ContactProvider contactProvider) async {
+  Future<void> addNewUserWithFilter(
+      BuildContext context, ContactProvider contactProvider) async {
     String enteredName = nameController.text.trim();
     String enteredPhoneNumber = numberController.text.trim();
 
     if (enteredName.isNotEmpty && enteredPhoneNumber.isNotEmpty) {
       bool isPhoneNumberExist = contactProvider.contacts.any((contact) =>
           contact.phones.any((phone) =>
-          phone.number.replaceAll(RegExp(r'\D'), '') == enteredPhoneNumber));
+              phone.number.replaceAll(RegExp(r'\D'), '') ==
+              enteredPhoneNumber));
       bool isNameExist = contactProvider.contacts.any((contact) =>
-      contact.displayName?.toLowerCase() == enteredName.toLowerCase());
+          contact.displayName.toLowerCase() == enteredName.toLowerCase());
 
       if (isPhoneNumberExist || isNameExist) {
         Fluttertoast.showToast(
-            msg: "This phone number or name already exists. Please click on contact button.");
+            msg: "This phone number or name already exists. Please Search");
         AppDialog.navigatePage(context, const UserContact());
       } else {
         insertNewUser(context);
@@ -112,15 +120,6 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  @override
-  void dispose() {
-    searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
-    nameController.dispose();
-    numberController.dispose();
-    super.dispose();
-  }
-
   void checkLocalAuthUpdate(BuildContext context, UsersModel userModel) async {
     bool isAvailable = await localAuth.canCheckBiometrics;
     Fluttertoast.showToast(msg: "is Available");
@@ -130,24 +129,20 @@ class UserProvider with ChangeNotifier {
         localizedReason: "Scan Your Finger Print to Proceed",
         options: const AuthenticationOptions(useErrorDialogs: true),
       );
-
       if (results) {
         if (userModel.id == null) {
           Fluttertoast.showToast(msg: "Invalid user ID");
           return;
         }
-
         var updateData = {
           "name": nameController.text.trim(),
           "number": numberController.text.trim(),
         };
-
         if (image != null) {
           updateData["image"] = image!.path;
         } else if (userModel.image != null) {
           updateData["image"] = userModel.image!;
         }
-
         DatabaseHelper().updateUser(updateData, userModel.id!);
         Fluttertoast.showToast(msg: "User updated successfully");
         showData();
@@ -165,16 +160,13 @@ class UserProvider with ChangeNotifier {
   void checkLocalAuthAndDeleteUser(BuildContext context, int index) async {
     bool isAvailable = await localAuth.canCheckBiometrics;
     Fluttertoast.showToast(msg: "is Available");
-
     if (isAvailable) {
       bool results = await localAuth.authenticate(
         localizedReason: "Scan Your Finger Print to Proceed",
         options: const AuthenticationOptions(useErrorDialogs: true),
       );
-
       if (results) {
         DatabaseHelper().deleteUser(filteredUsers[index].id!);
-        Navigator.pop(context);
         showData();
       } else {
         Fluttertoast.showToast(msg: "Permission Denied");
@@ -184,9 +176,17 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  @override
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    clearController();
+    super.dispose();
+  }
+
   void clearController() {
     nameController.clear();
     numberController.clear();
+    amountController.clear();
     image = null;
   }
 }

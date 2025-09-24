@@ -1,6 +1,6 @@
 class CreditDebitModel {
   final dynamic usersId;
-  final dynamic transitionID;
+  final dynamic transitionId;
   final dynamic creditId;
   final dynamic debitId;
   final String? remarkItem;
@@ -13,7 +13,7 @@ class CreditDebitModel {
 
   CreditDebitModel({
     this.usersId,
-    this.transitionID,
+    this.transitionId,
     this.creditId,
     this.debitId,
     required this.remarkItem,
@@ -28,7 +28,7 @@ class CreditDebitModel {
     return CreditDebitModel(
       usersId: map['usersId'],
       remarkItem: map['remarkItem'],
-      transitionID: map['transitionID'],
+      transitionId: map['transitionId'],
       creditId: map['creditId'],
       debitId: map['debitId'],
       loanedMoney: map['loanedMoney'],
@@ -43,7 +43,7 @@ class CreditDebitModel {
     return {
       'usersId':usersId,
       'remarkItem': remarkItem,
-      'transitionID': transitionID,
+      'transitionId': transitionId,
       'creditId': creditId,
       'debitId': debitId,
       'loanedMoney': loanedMoney,

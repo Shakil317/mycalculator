@@ -14,4 +14,31 @@ class AppRoot{
   static void appRoutPushReplacement( {required BuildContext context, required Widget page}){
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page,));
   }
+  static appAlertDialog({required BuildContext context, required String title, required String contentMes, required String buttonText, required String toastMes,  required VoidCallback onConfirm,}){
+   showDialog(context: context, builder: (context) {
+     return AlertDialog(
+       title: Text("$title"),
+         content: Text("$contentMes"),
+       actions: [
+         TextButton(
+           onPressed: () {
+             Navigator.of(context).pop(); // Close the dialog
+           },
+           child: Text("Cancel"),
+         ),
+         TextButton(
+           onPressed: () {
+             onConfirm();
+             ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Item $toastMes successfully!")),
+             );
+             Navigator.of(context).pop();
+           },
+           child:  Text("$buttonText", style: TextStyle(color: Colors.red)),
+         ),
+       ],
+     );
+
+   },) ;
+  }
 }

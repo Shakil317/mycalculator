@@ -38,21 +38,19 @@ class MyAmount {
 
   void depositBalance({ required int amount}) {
     accountBalance = accountBalance + amount;
-    if (kDebugMode) {
+
       print("depositBalance is : $amount");
-    }
+
   }
 
   void withdrawalBalance({ required int amount}) {
     if (amount <= accountBalance) {
       accountBalance = accountBalance - amount;
-      if (kDebugMode) {
+
         print(" withdrawalBalance is : $amount");
-      }
+
     } else {
-      if (kDebugMode) {
         print("Your Account Balance is $accountBalance so does not above withdrawalBalance");
-      }
     }
   }
 
