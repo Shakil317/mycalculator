@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:mycalculator/Utils/app_roots.dart';
 import 'package:mycalculator/ViewModels/user_profile_provider.dart';
 import 'package:mycalculator/ViewModels/user_provider.dart';
 import 'package:mycalculator/app_dialog.dart';
+import 'package:mycalculator/screens/downloas_pdf_screen.dart';
 import 'package:mycalculator/screens/tamplete_screen.dart';
 import 'package:mycalculator/screens/transition_history_screen.dart';
 import 'package:mycalculator/screens/update_user_screen.dart';
@@ -48,9 +50,6 @@ class _UserScreensState extends State<UserScreens> {
     userProvider = Provider.of<UserProvider>(context);
     userProfileProvider =
         Provider.of<UserProfileProvider>(context, listen: false);
-    // var transitionProvider = Provider.of<TransitionHistoryProvider>(
-    //   context,
-    // );
     return Scaffold(
       backgroundColor: AppThem.appBgColor,
       drawer:
@@ -98,18 +97,18 @@ class _UserScreensState extends State<UserScreens> {
                                             },
                                           child: CircleAvatar(
                                             radius: 30,
-                                            backgroundColor: Colors.green,
+                                            backgroundColor: Colors.white,
                                             foregroundImage: hasImage
                                                 ? (item.profileImage!
                                                         .startsWith('assets/')
                                                     ? AssetImage(item.profileImage!)
                                                     : FileImage(
                                                         File(item.profileImage!)))
-                                                : const AssetImage(
+                                                :  const AssetImage(
                                                     'assets/images/main_home_image.jpeg'),
                                           ),
                                         ),
-                                        const SizedBox(width: 10),
+                                        const SizedBox(width: 12),
                                         Expanded(
                                           child: Padding(
                                             padding:
@@ -133,35 +132,20 @@ class _UserScreensState extends State<UserScreens> {
                             },
                           ),
                         )),
-                     const Positioned(
+                      Positioned(
                         top: 120,
                         left: 62,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundImage:
-                              AssetImage("assets/images/udaan_biz_logo.png"),
+                        child:GestureDetector (
+                          onTap: () {
+                            AppDialog.myProfileDialog(context);
+                                  },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 12,
+                            backgroundImage:
+                                AssetImage("assets/images/udaan_biz_logo.png"),
+                          ),
                         ))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () async {
-                          await AppDialog.myProfileDialog(context);
-                        },
-                        child: const Text(
-                          "Add/Update Profile",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
                   ],
                 ),
                 Row(
@@ -265,7 +249,7 @@ class _UserScreensState extends State<UserScreens> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: CircleAvatar(
                         radius: 10,
@@ -355,46 +339,14 @@ class _UserScreensState extends State<UserScreens> {
                   itemCount: value.filteredUsers.length,
                   itemBuilder: (context, index) {
                     var user = value.filteredUsers[index];
-                  // int userCollection=  transitionProvider.yourCollectionData = user.userCollections as int;
                     return Column(
                       children: [
                         ListTile(
                           onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text(
-                                    "Delete User",
-                                    style: TextStyle(
-                                        fontSize: 24, color: Colors.pinkAccent),
-                                  ),
-                                  content: Text(
-                                    "Are you sure you want to delete User ${user.name}?",
-                                    style: TextStyle(
-                                      color: Colors.blue.shade900,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('No',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ))),
-                                    TextButton(
-                                        onPressed: () {
-                                          value.checkLocalAuthAndDeleteUser(
-                                              context, index);
-                                        },
-                                        child: Text('Yes',
-                                            style: TextStyle(
-                                              color: Colors.green.shade900,
-                                            ))),
-                                  ],
-                                );
-                              },
-                            );
+                            AppRoot.appAlertDialog(context: context, title: "Delete User", contentMes: "Are you sure you want to delete User ${user.name}?", buttonText: "Yes", toastMes: "User Delete Success", onConfirm: () {
+                              value.checkLocalAuthAndDeleteUser(
+                                  context, index);
+                            },);
                           },
                           onTap: () {
                             AppDialog.navigatePage(
@@ -433,7 +385,7 @@ class _UserScreensState extends State<UserScreens> {
                                   Padding(
                                     padding:
                                         const EdgeInsets.only(left: 30, top: 5),
-                                    child: Text("₹${user.userCollections}/",
+                                    child: Text("₹ ${(user.userCollections?.toString().isNotEmpty ?? false) ? user.userCollections : '00'}",
                                       style: TextStyle(
                                           color: Colors.redAccent.shade100,
                                           fontSize: 16),
@@ -517,44 +469,8 @@ class _UserScreensState extends State<UserScreens> {
                                           fontSize: 14,
                                           color: AppThem.appPrimaryColor)),
                                   onTap: () {
-                                    Navigator.pop(context);
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                            "Update User",
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                color: AppThem.appPrimaryColor),
-                                          ),
-                                          content: Text(
-                                            "Are you sure you want to Update User ${user.name}?",
-                                            style: TextStyle(
-                                              color: Colors.blue.shade900,
-                                            ),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('No',
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                    ))),
-                                            TextButton(
-                                                onPressed: () {
-                                                  AppDialog.navigatePage(context, UpdateUserScreen(user: user,));
-                                                },
-                                                child: Text('Yes',
-                                                    style: TextStyle(
-                                                      color:
-                                                          Colors.green.shade900,
-                                                    ))),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                    AppDialog.navigatePage(context, UpdateUserScreen(user: user,));
+
                                   },
                                 ),
                               ),
@@ -573,10 +489,11 @@ class _UserScreensState extends State<UserScreens> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const SizedBox(height: 20),
+           const SizedBox(height: 20),
           FloatingActionButton.extended(
             onPressed: () {
               AppDialog.showUserProfileDialog(context);
+              userProvider.clearController();
             },
             label: const Row(
               mainAxisSize: MainAxisSize.max,

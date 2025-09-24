@@ -314,22 +314,44 @@ class AppDialog {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          child: TextField(
-                            controller: usersData.nameController,
-                            keyboardType: TextInputType.name,
-                            style: const TextStyle(color: AppThem.appBgColor),
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                              labelText: "Enter Custemer Name",
-                              labelStyle: TextStyle(color: AppThem.appBgColor),
-                              prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
-                            ),
+                          padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: TextField(
+                                  controller: usersData.nameController,
+                                  keyboardType: TextInputType.name,
+                                  style: const TextStyle(color: AppThem.appBgColor),
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                                    labelText: "Enter Name",
+                                    labelStyle: TextStyle(color: AppThem.appBgColor),
+                                    prefixIcon: Icon(Icons.person, color: AppThem.appBgColor),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10), // space between the fields
+                              Expanded(
+                                flex: 1,
+                                child: TextField(
+                                  controller: usersData.amountController,
+                                  keyboardType: TextInputType.number,
+                                  style: const TextStyle(color: AppThem.appBgColor),
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                                    labelText: "Enter Amount",
+                                    labelStyle: TextStyle(color: AppThem.appBgColor),
+                                    prefixIcon: Icon(Icons.currency_rupee, color: AppThem.appBgColor),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+
                         Row(
                           children: [
                             Padding(

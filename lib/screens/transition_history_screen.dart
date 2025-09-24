@@ -26,8 +26,6 @@ class TransitionHistoryScreen extends StatefulWidget {
 
 class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
   late TransitionHistoryProvider creditProvider;
-  final GlobalKey _shareListKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
@@ -71,12 +69,6 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
               );
             },
           ),
-          // Checkbox(value:creditProvider.selectedIds.length == creditProvider.transitionList.length  ,
-          //     onChanged: (value) {
-          //      if(value == true){
-          //
-          //      }
-          //     },),
         ],
       ),
       body: Consumer<TransitionHistoryProvider>(builder: (context, data, child) {
@@ -94,9 +86,9 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     ),
                     child: GestureDetector(
                       onLongPress: () {
-                        creditProvider.checkLocalAuthTransitionDelete(context, item.transitionId!,);
+                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Receive Amount ${item.receivedMoney} ?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
+                          creditProvider.checkLocalAuthTransitionDelete(context, item.transitionId!);});
                         creditProvider.showAmountTransition();
-
                       },
                       child: Card(
                         color: Colors.white70,
@@ -223,8 +215,10 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     padding: const EdgeInsets.only(left: 50, right: 5),
                     child: GestureDetector(
                       onLongPress: () {
-                        Fluttertoast.showToast(msg: "onLongPress");
-                        creditProvider.checkLocalAuthTransitionDelete( context, index);
+                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Loaned Amount ${item.loanedMoney}?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
+                          creditProvider.checkLocalAuthTransitionDelete( context, item.transitionId);
+                        });
+                        creditProvider.showAmountTransition();
                       },
                       child: Card(
                         color: Colors.white70,
@@ -435,11 +429,8 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          showAppDialog(
-                              dialogTitle: "Loaned Money",
-                              controllerType:
-                                  creditProvider.creditAmountController,
-                              states: 'isLoaned');
+                          showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.creditAmountController, states: 'isLoaned');
+                          creditProvider.clearControllers();
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 0),

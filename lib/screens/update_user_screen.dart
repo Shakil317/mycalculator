@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mycalculator/Utils/app_roots.dart';
 import 'package:provider/provider.dart';
 import '../ViewModels/contact_provider.dart';
 import '../ViewModels/user_provider.dart';
@@ -53,7 +54,9 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
                 onPressed: () {
-                  userProvider.checkLocalAuthUpdate(context, widget.user,);
+                  AppRoot.appAlertDialog(context: context, title: "User Update", contentMes: "Are You Update User ${widget.user.name}?", buttonText: "Update", toastMes: "Update Success", onConfirm: () {
+                    userProvider.checkLocalAuthUpdate(context, widget.user);
+                  },);
                 },
                 icon: const Icon(
                   Icons.done,
@@ -265,8 +268,9 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                               backgroundColor:
                                   WidgetStatePropertyAll(Colors.orange)),
                           onPressed: () {
-                            //userProvider.updateUsers(context, widget.user);
-                            userProvider.checkLocalAuthUpdate(context, widget.user);
+                            AppRoot.appAlertDialog(context: context, title: "User Update", contentMes: "Are You Update User ${widget.user.name}?", buttonText: "Update", toastMes: "Update Success", onConfirm: () {
+                              userProvider.checkLocalAuthUpdate(context, widget.user);
+                            },);
                           },
                           child: const Text(
                             "Update User",

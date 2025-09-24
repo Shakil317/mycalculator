@@ -88,14 +88,9 @@ class DatabaseHelper {
     var db = await insertDatabase();
     return   db.update(transactionsTable, transition,where: "transitionId=?",whereArgs: [transitionId]);
   }
-  // Future<int> deleteTransition(int transitionId)async{
-  //   var db = await insertDatabase();
-  //   return await  db.delete(transactionsTable, where: "transitionId=?",whereArgs: [transitionId]);
-  // }
-
   Future<int> deleteTransition(int transitionId) async {
     var db = await insertDatabase();
-    return await db.delete(transactionsTable, where: "transitionId = ?", whereArgs: [transitionId],);
+    return await db.delete(transactionsTable, where: "transitionId = ?", whereArgs: [transitionId]);
   }
 
   /// await db.query('transitions', where: 'userId = ?', whereArgs: [userId]);

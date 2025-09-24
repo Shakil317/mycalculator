@@ -14,6 +14,7 @@ class TransitionHistoryProvider with ChangeNotifier{
   TextEditingController creditAmountController = TextEditingController();
   ScrollController transitionScrollController = ScrollController();
   final LocalAuthentication localAuth = LocalAuthentication();
+
   var usersId = 0;
   int yourCollectionData  = 0;
   Future<void> addToListUser() async {
@@ -66,12 +67,6 @@ class TransitionHistoryProvider with ChangeNotifier{
     notifyListeners();
     clearControllers();
   }
-  // void deleteTransition(BuildContext context, var index,) async {
-  //   await DatabaseHelper().deleteTransition(transitionList[index].transitionId!);
-  //   Navigator.pop(context);
-  //   showAmountTransition();
-  //   notifyListeners();
-  // }
 
   void showAmountTransition() async {
     transitionList.clear();
@@ -143,7 +138,6 @@ class TransitionHistoryProvider with ChangeNotifier{
       );
       if(results){
         await DatabaseHelper().deleteTransition(transitionId);
-        Fluttertoast.showToast(msg: "Deleting transitionId: $transitionId");
         showAmountTransition();
          notifyListeners();
       }else{
@@ -152,6 +146,11 @@ class TransitionHistoryProvider with ChangeNotifier{
     }else{
       Fluttertoast.showToast(msg: "No Biometric sensor detected");
     }
+  }
+  @override
+  void dispose() {
+    clearControllers();
+    super.dispose();
   }
   void clearControllers(){
     productRemarkController.clear();
